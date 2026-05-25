@@ -1,8 +1,9 @@
-const API_BASE = process.env.BUTTERBASE_API_BASE!;
-const API_KEY = process.env.BUTTERBASE_API_KEY!;
+const SUPABASE_URL = process.env.SUPABASE_URL!;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const API_BASE = SUPABASE_URL ? `${SUPABASE_URL}/rest/v1` : "";
 
-if (!API_BASE || !API_KEY) {
-  console.warn("Butterbase env vars missing");
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  console.warn("Supabase env vars missing");
 }
 
 type Row = Record<string, unknown>;
@@ -15,7 +16,8 @@ async function request<T = unknown>(
     ...init,
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${API_KEY}`,
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
       Prefer: "return=representation",
       ...init.headers,
     },
@@ -43,10 +45,11 @@ export async function updateById<T = Row>(
   id: string,
   data: Row,
 ): Promise<T> {
-  return request<T>(`/${table}/${id}`, {
+  const rows = await request<T[]>(`/${table}?id=eq.${id}`, {
     method: "PATCH",
     body: JSON.stringify(data),
   });
+  return Array.isArray(rows) ? rows[0] : (rows as T);
 }
 
 export async function selectOne<T = Row>(

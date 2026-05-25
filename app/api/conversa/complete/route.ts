@@ -54,10 +54,10 @@ export async function POST(req: Request) {
 
   await insert("assessment_results", {
     response_id,
-    scores: JSON.stringify(diagnostico.scores),
+    scores: diagnostico.scores,
     result_profile: diagnostico.result_profile,
     interpretacao: diagnostico.interpretacao,
-    acoes: JSON.stringify(diagnostico.acoes),
+    acoes: diagnostico.acoes,
     anxiety_level: diagnostico.anxiety_level,
     ai_model: model,
   });
