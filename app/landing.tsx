@@ -54,7 +54,7 @@ function Hero({ onStart }: { onStart: () => void }) {
 
       <div className="w-full grid grid-cols-3 gap-3 sm:gap-6 text-center">
         <Stat n="5 min" label="de conversa" />
-        <Stat n="4 perfis" label="possíveis" />
+        <Stat n="1 leitura" label="do seu momento" />
         <Stat n="3 ações" label="pros próximos 30 dias" />
       </div>
 
@@ -233,22 +233,22 @@ function Stat({ n, label }: { n: string; label: string }) {
 function PreviewCard() {
   return (
     <div className="w-full bg-surface border border-subtle rounded-2xl p-6 sm:p-8 space-y-4 relative overflow-hidden">
-      <div className="space-y-2">
+      <div className="space-y-1">
         <p className="text-xs uppercase tracking-widest text-muted">
-          Devolutiva exemplo
+          Exemplo de leitura
         </p>
-        <p className="font-display text-xl">Esperando Permissão</p>
+        <p className="font-display text-xl">Autoria</p>
       </div>
       <div className="space-y-3 text-sm text-foreground/80 leading-relaxed select-none">
         <p>
-          Você sabe o que quer — isso é mais do que muita gente tem. O que trava
-          você é a espera: por uma condição, um aval, o momento certo. Você
-          mencionou que <em>&quot;quando tiver mais experiência, aí sim&quot;</em>{" "}
-          — mas o momento certo raramente chega…
+          Você parece estar num momento em que a principal pergunta não é
+          &quot;o que fazer&quot;, mas &quot;o que é realmente meu&quot;. Você
+          mencionou <em>&quot;não sei se é o que eu quero ou o que esperam de mim&quot;</em>{" "}
+          — e essa distinção importa mais do que parece.
         </p>
         <p className="text-muted/70 blur-[2px] select-none">
-          E sobre o que você falou do seu pai e da empresa familiar, vale separar
-          dois medos diferentes que apareceram na conversa…
+          O que apareceu na sua fala sobre a empresa da família e o medo de
+          decepcionar aponta para uma tensão específica que vale nomear…
         </p>
       </div>
       <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-surface to-transparent pointer-events-none" />

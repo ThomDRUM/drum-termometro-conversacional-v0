@@ -35,8 +35,8 @@ export async function POST(req: Request) {
   await updateById("voice_conversations", voice.id, {
     elevenlabs_conversation_id: conversation_id,
     status: "concluida",
-    transcript: JSON.stringify(transcript),
-    extracted_variables: JSON.stringify(variables),
+    transcript: transcript,
+    extracted_variables: variables,
     duracao_seg: conv.metadata?.call_duration_secs ?? null,
     ended_at: new Date().toISOString(),
   });
@@ -54,11 +54,12 @@ export async function POST(req: Request) {
 
   await insert("assessment_results", {
     response_id,
-    scores: diagnostico.scores,
-    result_profile: diagnostico.result_profile,
-    interpretacao: diagnostico.interpretacao,
-    acoes: diagnostico.acoes,
-    anxiety_level: diagnostico.anxiety_level,
+    phase:    diagnostico.phase,
+    pathway:  diagnostico.pathway,
+    clarity:  diagnostico.clarity,
+    tension:  diagnostico.tension,
+    actions:  diagnostico.actions,
+    metadata: diagnostico.metadata,
     ai_model: model,
   });
 

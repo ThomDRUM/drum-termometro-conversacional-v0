@@ -1,57 +1,68 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { PROFILE_LABELS, type Profile } from "@/lib/profiles";
+import { PATHWAYS, PHASES, type Pathway, type Phase } from "@/lib/taxonomy";
 import type { Lead } from "@/lib/leads";
 import LeadDrawer from "./lead-drawer";
 
-type BandFilter = "all" | "hot" | "warm" | "cold";
-type ProfileFilter = "all" | Profile;
+type BandFilter    = "all" | "hot" | "warm" | "cold";
+type PathwayFilter = "all" | Pathway;
+type PhaseFilter   = "all" | Phase;
 
 export default function LeadsTable({ leads }: { leads: Lead[] }) {
-  const [band, setBand] = useState<BandFilter>("all");
-  const [profile, setProfile] = useState<ProfileFilter>("all");
-  const [ctaOnly, setCtaOnly] = useState(false);
+  const [band,     setBand]     = useState<BandFilter>("all");
+  const [pathway,  setPathway]  = useState<PathwayFilter>("all");
+  const [phase,    setPhase]    = useState<PhaseFilter>("all");
+  const [ctaOnly,  setCtaOnly]  = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     return [...leads]
-      .filter((l) => band === "all" || l.band === band)
-      .filter((l) => profile === "all" || l.result?.result_profile === profile)
+      .filter((l) => band    === "all" || l.band === band)
+      .filter((l) => pathway === "all" || l.result?.pathway?.name === pathway)
+      .filter((l) => phase   === "all" || l.result?.phase?.name   === phase)
       .filter((l) => !ctaOnly || l.result?.clicked_cta)
       .sort((a, b) => b.score - a.score);
-  }, [leads, band, profile, ctaOnly]);
+  }, [leads, band, pathway, phase, ctaOnly]);
 
   const sel = leads.find((l) => l.response_id === selected) ?? null;
 
   return (
     <section className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <FilterButton active={band === "all"} onClick={() => setBand("all")}>
-          Todos
-        </FilterButton>
-        <FilterButton active={band === "hot"} onClick={() => setBand("hot")} dotColor="bg-accent">
-          Quentes
-        </FilterButton>
-        <FilterButton active={band === "warm"} onClick={() => setBand("warm")} dotColor="bg-amber-500">
-          Mornos
-        </FilterButton>
-        <FilterButton active={band === "cold"} onClick={() => setBand("cold")} dotColor="bg-zinc-400">
-          Frios
-        </FilterButton>
+        {/* Band filters */}
+        <FilterButton active={band === "all"}  onClick={() => setBand("all")}>Todos</FilterButton>
+        <FilterButton active={band === "hot"}  onClick={() => setBand("hot")}  dotColor="bg-accent">Quentes</FilterButton>
+        <FilterButton active={band === "warm"} onClick={() => setBand("warm")} dotColor="bg-amber-500">Mornos</FilterButton>
+        <FilterButton active={band === "cold"} onClick={() => setBand("cold")} dotColor="bg-zinc-400">Frios</FilterButton>
+
         <div className="w-px h-5 bg-subtle mx-1" />
+
+        {/* Pathway filter */}
         <select
-          value={profile}
-          onChange={(e) => setProfile(e.target.value as ProfileFilter)}
+          value={pathway}
+          onChange={(e) => setPathway(e.target.value as PathwayFilter)}
           className="bg-surface border border-subtle rounded-full px-3 py-1.5 text-sm focus:outline-none focus:border-accent"
         >
-          <option value="all">Todos os perfis</option>
-          {Object.entries(PROFILE_LABELS).map(([k, v]) => (
-            <option key={k} value={k}>
-              {v}
-            </option>
+          <option value="all">Todas as trajetórias</option>
+          {PATHWAYS.map((p) => (
+            <option key={p} value={p}>{p}</option>
           ))}
         </select>
+
+        {/* Phase filter */}
+        <select
+          value={phase}
+          onChange={(e) => setPhase(e.target.value as PhaseFilter)}
+          className="bg-surface border border-subtle rounded-full px-3 py-1.5 text-sm focus:outline-none focus:border-accent"
+        >
+          <option value="all">Todas as fases</option>
+          {PHASES.map((p) => (
+            <option key={p} value={p}>{p}</option>
+          ))}
+        </select>
+
+        {/* CTA filter */}
         <label className="flex items-center gap-2 text-sm text-muted ml-2 cursor-pointer">
           <input
             type="checkbox"
@@ -61,6 +72,7 @@ export default function LeadsTable({ leads }: { leads: Lead[] }) {
           />
           Só quem clicou CTA
         </label>
+
         <span className="ml-auto text-sm text-muted">
           {filtered.length} de {leads.length}
         </span>
@@ -73,8 +85,9 @@ export default function LeadsTable({ leads }: { leads: Lead[] }) {
               <th className="text-left px-4 py-3 font-medium">Score</th>
               <th className="text-left px-4 py-3 font-medium">Nome</th>
               <th className="text-left px-4 py-3 font-medium">Email</th>
-              <th className="text-left px-4 py-3 font-medium">Perfil</th>
-              <th className="text-left px-4 py-3 font-medium">Ansiedade</th>
+              <th className="text-left px-4 py-3 font-medium">Fase</th>
+              <th className="text-left px-4 py-3 font-medium">Trajetória</th>
+              <th className="text-left px-4 py-3 font-medium">Clareza</th>
               <th className="text-left px-4 py-3 font-medium">CTA</th>
               <th className="text-left px-4 py-3 font-medium">Quando</th>
             </tr>
@@ -82,10 +95,7 @@ export default function LeadsTable({ leads }: { leads: Lead[] }) {
           <tbody>
             {filtered.length === 0 && (
               <tr>
-                <td
-                  colSpan={7}
-                  className="px-4 py-12 text-center text-muted text-sm"
-                >
+                <td colSpan={8} className="px-4 py-12 text-center text-muted text-sm">
                   Nenhum lead com esses filtros.
                 </td>
               </tr>
@@ -105,19 +115,18 @@ export default function LeadsTable({ leads }: { leads: Lead[] }) {
                 <td className="px-4 py-3 text-muted text-xs">
                   {l.email || "—"}
                 </td>
-                <td className="px-4 py-3">
-                  {l.result?.result_profile ? (
-                    <span className="text-foreground">
-                      {PROFILE_LABELS[l.result.result_profile]}
-                    </span>
-                  ) : (
-                    <span className="text-muted text-xs">incompleto</span>
+                <td className="px-4 py-3 text-sm">
+                  {l.result?.phase?.name ?? (
+                    <span className="text-muted text-xs">—</span>
                   )}
                 </td>
-                <td className="px-4 py-3 text-muted">
-                  {l.result?.anxiety_level != null
-                    ? `${l.result.anxiety_level}/5`
-                    : "—"}
+                <td className="px-4 py-3 text-sm">
+                  {l.result?.pathway?.name ?? (
+                    <span className="text-muted text-xs">—</span>
+                  )}
+                </td>
+                <td className="px-4 py-3 text-muted text-xs">
+                  {l.result?.clarity?.label ?? "—"}
                 </td>
                 <td className="px-4 py-3">
                   {l.result?.clicked_cta ? (
@@ -168,14 +177,12 @@ function FilterButton({
 
 function ScoreBadge({ band, score }: { band: Lead["band"]; score: number }) {
   const colors = {
-    hot: "bg-accent text-background",
+    hot:  "bg-accent text-background",
     warm: "bg-amber-100 text-amber-900",
     cold: "bg-subtle text-muted",
   };
   return (
-    <span
-      className={`inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 rounded-md text-xs font-mono font-medium ${colors[band]}`}
-    >
+    <span className={`inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 rounded-md text-xs font-mono font-medium ${colors[band]}`}>
       {score}
     </span>
   );
@@ -188,6 +195,5 @@ function timeAgo(iso: string): string {
   if (m < 60) return `${m} min`;
   const h = Math.floor(m / 60);
   if (h < 24) return `${h}h`;
-  const d = Math.floor(h / 24);
-  return `${d}d`;
+  return `${Math.floor(h / 24)}d`;
 }

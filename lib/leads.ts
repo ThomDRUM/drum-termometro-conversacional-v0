@@ -1,5 +1,5 @@
 import { selectMany } from "./butterbase";
-import type { Profile } from "./profiles";
+import type { Diagnostico } from "./taxonomy";
 
 type ResponseRow = {
   id: string;
@@ -11,16 +11,12 @@ type ResponseRow = {
   completed_at: string | null;
 };
 
-type ResultRow = {
+type ResultRow = Diagnostico & {
   response_id: string;
-  result_profile: Profile;
-  scores: Record<Profile, number> | null;
-  anxiety_level: number | null;
-  interpretacao: string | null;
-  acoes: string[] | null;
-  chosen_acao_index: number | null;
-  clicked_cta: boolean;
   ai_model: string | null;
+  clicked_cta: boolean;
+  chosen_action_type: string | null;
+  created_at: string;
 };
 
 type VoiceRow = {
@@ -53,9 +49,10 @@ function scoreLead(
 ): number {
   let s = 0;
   if (result?.clicked_cta) s += 40;
-  if (result?.chosen_acao_index != null) s += 20;
-  if ((result?.anxiety_level ?? 0) >= 4) s += 15;
-  if ((voice?.duracao_seg ?? 0) >= 240) s += 10;
+  if (result?.chosen_action_type) s += 20;
+  const anxiety = result?.metadata?.anxiety_score_1_to_5 ?? 0;
+  if (anxiety >= 4) s += 15;
+  if ((voice?.duracao_seg ?? 0) >= 180) s += 10;
   if (res.status === "concluido") s += 10;
   if (Date.now() - new Date(res.created_at).getTime() < TWO_DAYS) s += 5;
   return s;
@@ -75,19 +72,19 @@ export async function listLeads(): Promise<Lead[]> {
   ]);
 
   const resultByResponse = new Map(results.map((r) => [r.response_id, r]));
-  const voiceByResponse = new Map(voices.map((v) => [v.response_id, v]));
+  const voiceByResponse  = new Map(voices.map((v) => [v.response_id, v]));
 
   return responses.map((r) => {
     const result = resultByResponse.get(r.id) ?? null;
-    const voice = voiceByResponse.get(r.id) ?? null;
-    const score = scoreLead(r, result, voice);
+    const voice  = voiceByResponse.get(r.id)  ?? null;
+    const score  = scoreLead(r, result, voice);
     return {
-      response_id: r.id,
-      nome: r.nome,
-      email: r.email,
-      status: r.status,
-      created_at: r.created_at,
-      completed_at: r.completed_at,
+      response_id:   r.id,
+      nome:          r.nome,
+      email:         r.email,
+      status:        r.status,
+      created_at:    r.created_at,
+      completed_at:  r.completed_at,
       result,
       voice,
       score,
@@ -102,19 +99,31 @@ export async function getLead(responseId: string): Promise<Lead | null> {
 }
 
 export function leadStats(leads: Lead[]) {
-  const total = leads.length;
+  const total     = leads.length;
   const completed = leads.filter((l) => l.status === "concluido").length;
-  const cta = leads.filter((l) => l.result?.clicked_cta).length;
-  const hot = leads.filter((l) => l.band === "hot").length;
-  const last24h = leads.filter(
+  const cta       = leads.filter((l) => l.result?.clicked_cta).length;
+  const hot       = leads.filter((l) => l.band === "hot").length;
+  const last24h   = leads.filter(
     (l) => Date.now() - new Date(l.created_at).getTime() < 86_400_000,
   ).length;
-  const byProfile: Record<string, number> = {};
+
+  // Count by pathway name
+  const byPathway: Record<string, number> = {};
   for (const l of leads) {
-    if (l.result?.result_profile) {
-      byProfile[l.result.result_profile] =
-        (byProfile[l.result.result_profile] ?? 0) + 1;
+    const name = l.result?.pathway?.name;
+    if (name) {
+      byPathway[name] = (byPathway[name] ?? 0) + 1;
     }
   }
-  return { total, completed, cta, hot, last24h, byProfile };
+
+  // Count by phase name
+  const byPhase: Record<string, number> = {};
+  for (const l of leads) {
+    const name = l.result?.phase?.name;
+    if (name) {
+      byPhase[name] = (byPhase[name] ?? 0) + 1;
+    }
+  }
+
+  return { total, completed, cta, hot, last24h, byPathway, byPhase };
 }

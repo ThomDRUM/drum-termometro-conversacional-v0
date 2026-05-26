@@ -1,7 +1,7 @@
 import { requireAdmin } from "@/lib/admin";
 import { listLeads, leadStats } from "@/lib/leads";
+import { PATHWAYS, PHASES } from "@/lib/taxonomy";
 import LeadsTable from "./leads-table";
-import { PROFILE_LABELS } from "@/lib/profiles";
 
 export const dynamic = "force-dynamic";
 
@@ -23,19 +23,37 @@ export default async function AdminPage() {
           <LogoutButton />
         </header>
 
+        {/* ── Stats ── */}
         <section className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          <Stat label="Total" value={stats.total} />
+          <Stat label="Total"       value={stats.total} />
           <Stat label="Completados" value={stats.completed} />
-          <Stat label="Clicaram CTA" value={stats.cta} accent />
-          <Stat label="Quentes" value={stats.hot} accent />
+          <Stat label="Clicaram CTA" value={stats.cta}  accent />
+          <Stat label="Quentes"     value={stats.hot}   accent />
           <Stat label="Últimas 24h" value={stats.last24h} />
         </section>
 
+        {/* ── Pathway distribution ── */}
         <section className="bg-surface border border-subtle rounded-2xl p-5 sm:p-6 space-y-3">
           <p className="text-xs uppercase tracking-widest text-muted">
-            Distribuição dos perfis
+            Distribuição por trajetória
           </p>
-          <ProfileChart byProfile={stats.byProfile} total={stats.completed} />
+          <DistributionChart
+            data={stats.byPathway}
+            keys={[...PATHWAYS]}
+            total={stats.completed}
+          />
+        </section>
+
+        {/* ── Phase distribution ── */}
+        <section className="bg-surface border border-subtle rounded-2xl p-5 sm:p-6 space-y-3">
+          <p className="text-xs uppercase tracking-widest text-muted">
+            Distribuição por fase
+          </p>
+          <DistributionChart
+            data={stats.byPhase}
+            keys={[...PHASES]}
+            total={stats.completed}
+          />
         </section>
 
         <LeadsTable leads={leads} />
@@ -56,22 +74,20 @@ function Stat({
   return (
     <div className="bg-surface border border-subtle rounded-2xl p-4">
       <p className="text-xs text-muted uppercase tracking-widest">{label}</p>
-      <p
-        className={`font-display text-3xl tracking-tight mt-1 ${
-          accent ? "text-accent" : "text-foreground"
-        }`}
-      >
+      <p className={`font-display text-3xl tracking-tight mt-1 ${accent ? "text-accent" : "text-foreground"}`}>
         {value}
       </p>
     </div>
   );
 }
 
-function ProfileChart({
-  byProfile,
+function DistributionChart({
+  data,
+  keys,
   total,
 }: {
-  byProfile: Record<string, number>;
+  data: Record<string, number>;
+  keys: string[];
   total: number;
 }) {
   if (total === 0) {
@@ -79,18 +95,13 @@ function ProfileChart({
   }
   return (
     <div className="space-y-2">
-      {Object.entries(PROFILE_LABELS).map(([key, label]) => {
-        const v = byProfile[key] ?? 0;
+      {keys.map((key) => {
+        const v   = data[key] ?? 0;
         const pct = total > 0 ? (v / total) * 100 : 0;
         return (
-          <div
-            key={key}
-            className="grid grid-cols-[1fr_auto] gap-3 items-center"
-          >
+          <div key={key} className="grid grid-cols-[1fr_auto] gap-3 items-center">
             <div className="flex flex-col gap-1">
-              <div className="flex justify-between text-sm">
-                <span className="text-foreground">{label}</span>
-              </div>
+              <span className="text-sm text-foreground">{key}</span>
               <div className="h-1.5 bg-subtle rounded-full overflow-hidden">
                 <div
                   className="h-full bg-accent transition-all duration-700"
@@ -98,7 +109,7 @@ function ProfileChart({
                 />
               </div>
             </div>
-            <span className="text-xs text-muted font-mono w-12 text-right">
+            <span className="text-xs text-muted font-mono w-16 text-right">
               {v} ({Math.round(pct)}%)
             </span>
           </div>

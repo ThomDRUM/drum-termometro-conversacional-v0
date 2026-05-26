@@ -27,12 +27,16 @@ export async function PATCH(
   const { id } = await ctx.params;
   const body = (await req.json()) as {
     clicked_cta?: boolean;
-    chosen_acao_index?: number;
+    chosen_action_type?: string; // 'para_dentro' | 'para_fora' | 'prototipar'
   };
+
   const patch: Record<string, unknown> = {};
-  if (typeof body.clicked_cta === "boolean") patch.clicked_cta = body.clicked_cta;
-  if (typeof body.chosen_acao_index === "number")
-    patch.chosen_acao_index = body.chosen_acao_index;
+  if (typeof body.clicked_cta === "boolean") {
+    patch.clicked_cta = body.clicked_cta;
+  }
+  if (typeof body.chosen_action_type === "string") {
+    patch.chosen_action_type = body.chosen_action_type;
+  }
 
   if (Object.keys(patch).length === 0) {
     return NextResponse.json({ ok: true });

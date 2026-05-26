@@ -1,153 +1,145 @@
-# Prompt da Anthropic — Gerador de Diagnóstico
-## Termômetro 0→1
+# Prompt da Anthropic — Motor de Diagnóstico
+## DRUM Career Conversation
 
-Este é o prompt que seu sistema envia à API da Anthropic depois que a
-conversa de voz termina. Ele recebe a transcrição + as variáveis
-extraídas pela ElevenLabs e devolve o diagnóstico em JSON, pronto
-para gravar em `assessment_results`.
+Este é o prompt que o sistema envia à API da Anthropic depois que a conversa de voz termina. Ele recebe a transcrição + as variáveis extraídas pela ElevenLabs e devolve o diagnóstico em JSON, pronto para gravar em `assessment_results`.
 
----
-
-## System prompt
-
-> Você é o motor de diagnóstico do Termômetro 0→1, um produto da DRUM
-> — uma empresa que ajuda pessoas a desenharem suas trajetórias
-> profissionais. Seu trabalho é ler a transcrição de uma conversa de
-> voz com um jovem recém-formado e identificar em qual de quatro
-> perfis ele está, escrevendo uma devolutiva que o faça se sentir
-> profundamente compreendido.
->
-> OS QUATRO PERFIS:
->
-> - paralisado_por_opcao — A pessoa não tem falta de clareza; tem o
->   oposto. Vê caminhos demais e qualquer escolha parece um custo
->   alto demais. Trava porque escolher significa abrir mão. O que ela
->   precisa é aprender a fechar portas, não abrir mais.
->
-> - atrasado — A pessoa sente que todos os colegas já construíram
->   algo e ela ficou para trás. Vive comparando. A urgência de
->   "recuperar o tempo" a paralisa. O que ela precisa é de um
->   primeiro projeto pequeno e de parar de medir seu começo pelo
->   meio dos outros.
->
-> - executor_sem_norte — A pessoa faz muita coisa, tem energia e
->   iniciativa, mas sem direção. Está sempre ocupada e raramente no
->   rumo certo. O que ela precisa é de uma North Star antes de mais
->   ação — senão corre rápido para qualquer lado.
->
-> - esperando_permissao — A pessoa sabe o que quer, mas espera que
->   alguém ou alguma condição a autorize a começar. "Quando eu tiver
->   X, aí sim." O que ela precisa é de um empurrão e de prototipar
->   pequeno agora, sem esperar.
->
-> COMO DECIDIR:
-> Leia a transcrição inteira. As variáveis extraídas pela conversa
-> são apoio, não veredito — confie mais no que a pessoa realmente
-> disse. Uma pessoa pode ter traços de mais de um perfil; identifique
-> o dominante e atribua uma confiança (0 a 1) a cada um, somando 1.
->
-> COMO ESCREVER A DEVOLUTIVA:
-> - Nomeie a dor da pessoa melhor do que ela mesma conseguiria.
->   Específico, não genérico. Nada de "você é versátil e curiosa".
-> - Cite de volta algo concreto que a pessoa disse na conversa. É
->   isso que faz a devolutiva parecer feita à mão.
-> - Tom: caloroso, honesto, adulto. Fala com a pessoa, não sobre ela.
->   Sem jargão de coach, sem otimismo vazio.
-> - A devolutiva tem 2 a 3 parágrafos curtos.
-> - Termine com 3 ações concretas para os próximos 30 dias —
->   pequenas, específicas, factíveis. Nada de "descubra sua paixão".
->
-> FORMATO DE SAÍDA:
-> Responda APENAS com um objeto JSON válido, sem texto antes ou
-> depois, sem cercas de código. Estrutura exata:
->
-> {
->   "result_profile": "<um dos 4 perfis>",
->   "scores": {
->     "paralisado_por_opcao": <0-1>,
->     "atrasado": <0-1>,
->     "executor_sem_norte": <0-1>,
->     "esperando_permissao": <0-1>
->   },
->   "anxiety_level": <inteiro 1-5, ou null se não mencionado>,
->   "interpretacao": "<a devolutiva, 2-3 parágrafos>",
->   "acoes": [
->     "<ação 1 para os próximos 30 dias>",
->     "<ação 2>",
->     "<ação 3>"
->   ]
-> }
+O prompt completo e oficial vive em `lib/anthropic.ts` (constante `SYSTEM_PROMPT`). Este documento é a referência de leitura humana.
 
 ---
 
-## User message (montada pelo seu sistema)
+## Arquitetura do diagnóstico
 
-> Aqui está a transcrição de uma conversa de diagnóstico de carreira.
->
-> VARIÁVEIS CAPTURADAS NA CONVERSA:
-> {extracted_variables em JSON}
->
-> TRANSCRIÇÃO COMPLETA:
-> {transcript — turno a turno, role + texto}
->
-> Gere o diagnóstico no formato JSON especificado.
+O sistema produz 5 dimensões:
+
+1. **Fase** — como a pessoa se relaciona com identidade, construção e decisão
+2. **Trajetória** — qual caminho profissional emerge com mais força
+3. **Clareza** — índice 0–10 com 5 critérios avaliados por âncoras
+4. **Tensão** — fricção de movimento dominante neste momento
+5. **Ações** — 3 ações concretas (para_dentro / para_fora / prototipar)
+
+---
+
+## Fases válidas (6)
+
+- Exploração
+- Direção
+- Autoria
+- Consolidação
+- Reposicionamento
+- Legado
+
+A fase é inferida **depois** da conversa a partir de padrões narrativos. O agente nunca sabe a fase durante a conversa.
+
+---
+
+## Trajetórias válidas (7)
+
+Fonte oficial: `Tipos de Carreira - Drum.pdf`
+
+1. Empreendedor
+2. Executivo
+3. Profissional liberal
+4. Consultor
+5. Acadêmico
+6. Creator / Autor
+7. Sucessor
+
+**NÃO existem:** Especialista, Operador, Alocador, Híbrido.
+Se a fala parecer híbrida, o sistema identifica a trajetória dominante.
+
+---
+
+## Índice de clareza
+
+5 critérios × (0 / 1 / 2) = total 0–10
+
+| Critério | O que mede |
+|---|---|
+| Nomeação da direção | A pessoa consegue nomear um caminho? |
+| Coerência da fala | As falas convergem para uma direção? |
+| Critério próprio | A justificativa é interna ou externa? |
+| Movimento concreto | Existe ação prática coerente com a direção? |
+| Sustentação da ambiguidade | Aguenta avançar sem certeza absoluta? |
+
+Conversão: 0–2 Difusa · 3–4 Emergente · 5–6 Em construção · 7–8 Clara · 9–10 Muito clara
+
+As âncoras completas (exemplos de falas para cada nível) estão em `CAREER_PATHWAYS_RULES.md`.
+
+---
+
+## Tensões válidas (8)
+
+- Excesso de possibilidades
+- Dependência de validação
+- Construção sem autoria
+- Impostor
+- Movimento sem direção
+- Falta de consistência
+- Autonomia vs lealdade familiar
+- Comparação constante
+
+---
+
+## JSON de saída
+
+```json
+{
+  "phase": {
+    "name": "<fase>",
+    "short_description": "<2-3 frases>",
+    "confidence": 0.82,
+    "evidence": ["<frase da transcrição>"]
+  },
+  "pathway": {
+    "name": "<trajetória>",
+    "short_description": "<2-3 frases>",
+    "confidence": 0.78,
+    "evidence": ["<frase da transcrição>"]
+  },
+  "clarity": {
+    "score_1_to_5": 3,
+    "label": "Em construção",
+    "total_points_0_to_10": 6,
+    "criteria": {
+      "direction_naming":    { "score_0_to_2": 1, "evidence": "..." },
+      "speech_coherence":    { "score_0_to_2": 2, "evidence": "..." },
+      "own_criteria":        { "score_0_to_2": 1, "evidence": "..." },
+      "concrete_movement":   { "score_0_to_2": 1, "evidence": "..." },
+      "ambiguity_tolerance": { "score_0_to_2": 1, "evidence": "..." }
+    }
+  },
+  "tension": {
+    "name": "<tensão>",
+    "short_description": "<2-3 frases>",
+    "confidence": 0.84,
+    "evidence": ["<frase da transcrição>"]
+  },
+  "actions": [
+    {
+      "type": "para_dentro",
+      "title": "<título curto>",
+      "description": "<instrução concreta referenciando a conversa>",
+      "why_this_action": "<por que cria movimento para esta pessoa>",
+      "timeframe": "7 dias"
+    },
+    { "type": "para_fora", ... },
+    { "type": "prototipar", ... }
+  ],
+  "metadata": {
+    "anxiety_score_1_to_5": 4,
+    "conversation_duration_seconds": 260,
+    "mentioned_people": ["pai", "irmã"],
+    "mentioned_projects": ["nova frente digital"],
+    "raw_summary": "<resumo neutro da conversa>"
+  }
+}
+```
 
 ---
 
 ## Notas de implementação
 
-- Peça `response_format` JSON se o SDK permitir, ou apenas instrua o
-  modelo a responder só com JSON (o system prompt já faz isso) e
-  faça `JSON.parse` com try/catch.
-- O campo `ai_model` de `assessment_results` deve registrar qual
-  modelo respondeu — útil para rastreio.
-- Se o `JSON.parse` falhar, tenha um fallback: limpar eventuais
-  cercas ```json antes de parsear.
-- Validação mínima antes de gravar: `result_profile` é um dos 4
-  enums; `scores` soma ~1; `acoes` tem 3 itens.
-- A chamada à Anthropic pode ser feita pelo gateway de IA do
-  Butterbase (API compatível com OpenAI) ou direto pela API da
-  Anthropic — as duas funcionam.
-
----
-
-## Texto-base dos 4 perfis (fallback sem IA)
-
-Se a chamada à Anthropic falhar na hora da demo, use estes textos
-fixos por perfil. São genéricos de propósito — funcionam para
-qualquer pessoa daquele perfil, sem personalização.
-
-**Paralisado por Opção.**
-Seu problema não é falta de clareza — é o contrário. Você enxerga
-caminhos demais, e cada escolha parece exigir que você abra mão dos
-outros. Por isso trava: decidir dói. O próximo passo não é descobrir
-mais opções, é aprender a fechar portas sem sentir que está perdendo
-algo. Ações: escolher um único caminho para explorar a fundo por 30
-dias; listar o que você NÃO vai fazer neste mês; conversar com uma
-pessoa que já seguiu um dos caminhos que você considera.
-
-**Atrasado.**
-Você sente que todo mundo já construiu algo e que você ficou para
-trás. Mas você está comparando o seu começo com o meio dos outros —
-e isso é uma medida injusta. Você não está atrasado; você está no
-início, e o início parece assim para todo mundo. Ações: começar um
-projeto pequeno que caiba num fim de semana; parar de abrir o
-LinkedIn por 30 dias; escrever três coisas que você já fez e
-desvaloriza.
-
-**Executor sem Norte.**
-Você tem energia e iniciativa de sobra — faz coisas, começa coisas,
-se move. O que falta não é ação, é direção. Sem uma North Star, toda
-essa energia corre rápido para qualquer lado. Ações: escrever em uma
-frase como você quer que sua vida esteja em três anos; antes de
-aceitar o próximo projeto, checar se ele aproxima dessa frase;
-escolher uma área para aprofundar em vez de espalhar.
-
-**Esperando Permissão.**
-Você sabe o que quer — isso é mais do que muita gente tem. O que
-trava você é a espera: por uma condição, um aval, o momento certo.
-Mas o momento certo raramente chega; ele se constrói começando
-pequeno. Ações: definir a menor versão possível do que você quer
-fazer e começá-la esta semana; marcar uma conversa com alguém que já
-faz isso; identificar de quem você está esperando permissão — e
-seguir sem ela.
+- O campo `ai_model` de `assessment_results` registra qual modelo respondeu.
+- Se o `JSON.parse` falhar, o sistema usa `buildFallback()` de `lib/anthropic.ts`.
+- Validação antes de gravar: `phase.name` é uma das 6 fases; `pathway.name` é uma das 7 trajetórias; `tension.name` é uma das 8 tensões; `actions` tem exatamente 3 itens com tipos `para_dentro`, `para_fora`, `prototipar`.
+- O `label` e `score_1_to_5` da clareza são recalculados pelo sistema a partir de `total_points_0_to_10` — não dependem do que o modelo retornar nesses campos.

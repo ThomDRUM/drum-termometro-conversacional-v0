@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { PROFILE_LABELS } from "@/lib/profiles";
+import { ACTION_TYPE_LABELS } from "@/lib/taxonomy";
 import type { Lead } from "@/lib/leads";
 
 export default function LeadDrawer({
@@ -23,9 +23,9 @@ export default function LeadDrawer({
     };
   }, [onClose]);
 
-  const result = lead.result;
+  const result     = lead.result;
   const transcript = lead.voice?.transcript ?? [];
-  const acoes = Array.isArray(result?.acoes) ? result!.acoes : [];
+  const actions    = Array.isArray(result?.actions) ? result!.actions : [];
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
@@ -36,9 +36,7 @@ export default function LeadDrawer({
       <aside className="relative w-full max-w-2xl bg-background overflow-y-auto shadow-2xl">
         <header className="sticky top-0 bg-background/95 backdrop-blur border-b border-subtle px-6 py-4 flex items-center justify-between z-10">
           <div className="space-y-0.5">
-            <p className="text-xs uppercase tracking-widest text-muted">
-              Lead
-            </p>
+            <p className="text-xs uppercase tracking-widest text-muted">Lead</p>
             <h2 className="font-display text-xl tracking-tight">
               {lead.nome || "Sem nome"}
             </h2>
@@ -53,25 +51,39 @@ export default function LeadDrawer({
         </header>
 
         <div className="px-6 py-6 space-y-8">
+
+          {/* ── Stats grid ── */}
           <section className="grid grid-cols-3 gap-3">
             <Info label="Score" value={`${lead.score}`} />
             <Info
-              label="Perfil"
+              label="Fase"
+              value={result?.phase?.name ?? "—"}
+            />
+            <Info
+              label="Trajetória"
+              value={result?.pathway?.name ?? "—"}
+            />
+            <Info label="Email" value={lead.email || "—"} />
+            <Info
+              label="Clareza"
               value={
-                result?.result_profile
-                  ? PROFILE_LABELS[result.result_profile]
+                result?.clarity?.label
+                  ? `${result.clarity.label} (${result.clarity.total_points_0_to_10}/10)`
                   : "—"
               }
+            />
+            <Info
+              label="Tensão"
+              value={result?.tension?.name ?? "—"}
             />
             <Info
               label="Ansiedade"
               value={
-                result?.anxiety_level != null
-                  ? `${result.anxiety_level}/5`
+                result?.metadata?.anxiety_score_1_to_5 != null
+                  ? `${result.metadata.anxiety_score_1_to_5}/5`
                   : "—"
               }
             />
-            <Info label="Email" value={lead.email || "—"} />
             <Info
               label="Duração"
               value={
@@ -86,45 +98,72 @@ export default function LeadDrawer({
             />
           </section>
 
-          {result?.interpretacao && (
+          {/* ── Fase description ── */}
+          {result?.phase?.short_description && (
             <section className="space-y-2">
               <p className="text-xs uppercase tracking-widest text-muted">
-                Devolutiva
+                Momento ({result.phase.name})
               </p>
-              <article className="font-display text-base leading-relaxed text-foreground/90 space-y-3">
-                {result.interpretacao.split(/\n\n+/).map((p, i) => (
-                  <p key={i}>{p}</p>
-                ))}
-              </article>
+              <p className="text-sm leading-relaxed text-foreground/85">
+                {result.phase.short_description}
+              </p>
             </section>
           )}
 
-          {acoes.length > 0 && (
+          {/* ── Pathway description ── */}
+          {result?.pathway?.short_description && (
+            <section className="space-y-2">
+              <p className="text-xs uppercase tracking-widest text-muted">
+                Caminho ({result.pathway.name})
+              </p>
+              <p className="text-sm leading-relaxed text-foreground/85">
+                {result.pathway.short_description}
+              </p>
+            </section>
+          )}
+
+          {/* ── Tension description ── */}
+          {result?.tension?.short_description && (
+            <section className="space-y-2">
+              <p className="text-xs uppercase tracking-widest text-muted">
+                Tensão ({result.tension.name})
+              </p>
+              <p className="text-sm leading-relaxed text-foreground/85">
+                {result.tension.short_description}
+              </p>
+            </section>
+          )}
+
+          {/* ── Actions ── */}
+          {actions.length > 0 && (
             <section className="space-y-3">
               <p className="text-xs uppercase tracking-widest text-muted">
                 Ações sugeridas
-                {result?.chosen_acao_index != null && (
+                {result?.chosen_action_type && (
                   <span className="ml-2 text-accent normal-case tracking-normal">
-                    (escolheu a #{result.chosen_acao_index + 1} como quebra-gelo)
+                    (escolheu: {ACTION_TYPE_LABELS[result.chosen_action_type as keyof typeof ACTION_TYPE_LABELS]})
                   </span>
                 )}
               </p>
-              <ol className="space-y-2">
-                {acoes.map((a, i) => {
-                  const chosen = result?.chosen_acao_index === i;
+              <ol className="space-y-3">
+                {actions.map((a) => {
+                  const chosen = result?.chosen_action_type === a.type;
                   return (
                     <li
-                      key={i}
-                      className={`flex gap-3 p-3 rounded-xl border ${
+                      key={a.type}
+                      className={`p-4 rounded-xl border space-y-1 ${
                         chosen
                           ? "bg-accent-soft border-accent"
                           : "border-subtle bg-surface"
                       }`}
                     >
-                      <span className="text-muted font-mono text-xs pt-0.5">
-                        {i + 1}
-                      </span>
-                      <span className="text-sm">{a}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs uppercase tracking-widest text-muted">
+                          {ACTION_TYPE_LABELS[a.type]}
+                        </span>
+                      </div>
+                      <p className="text-sm font-medium">{a.title}</p>
+                      <p className="text-xs text-muted leading-relaxed">{a.description}</p>
                     </li>
                   );
                 })}
@@ -132,6 +171,19 @@ export default function LeadDrawer({
             </section>
           )}
 
+          {/* ── Raw summary ── */}
+          {result?.metadata?.raw_summary && (
+            <section className="space-y-2">
+              <p className="text-xs uppercase tracking-widest text-muted">
+                Resumo da conversa
+              </p>
+              <p className="text-sm text-foreground/85 leading-relaxed">
+                {result.metadata.raw_summary}
+              </p>
+            </section>
+          )}
+
+          {/* ── Transcript ── */}
           {transcript.length > 0 && (
             <section className="space-y-3">
               <p className="text-xs uppercase tracking-widest text-muted">
@@ -156,12 +208,10 @@ export default function LeadDrawer({
             </section>
           )}
 
+          {/* ── Meta ── */}
           <section className="text-xs text-muted space-y-1 pt-6 border-t border-subtle">
             <p>response_id: {lead.response_id}</p>
-            <p>
-              criado em:{" "}
-              {new Date(lead.created_at).toLocaleString("pt-BR")}
-            </p>
+            <p>criado em: {new Date(lead.created_at).toLocaleString("pt-BR")}</p>
             {lead.voice?.elevenlabs_conversation_id && (
               <p>conv ElevenLabs: {lead.voice.elevenlabs_conversation_id}</p>
             )}

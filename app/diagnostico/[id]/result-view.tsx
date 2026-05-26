@@ -1,16 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PROFILE_LABELS, PROFILES, type Profile } from "@/lib/profiles";
+import {
+  PHASES,
+  PHASE_EDITORIAL,
+  PATHWAY_EDITORIAL,
+  ACTION_TYPE_LABELS,
+  type Diagnostico,
+  type ActionType,
+  type ClarityLabel,
+  type Phase,
+} from "@/lib/taxonomy";
 
-type ResultRow = {
-  result_profile: Profile;
-  scores: Record<Profile, number>;
-  anxiety_level: number | null;
-  interpretacao: string;
-  acoes: string[];
+type ResultRow = Diagnostico & {
   clicked_cta: boolean;
-  chosen_acao_index: number | null;
+  chosen_action_type: string | null;
 };
 
 type ApiResponse =
@@ -18,22 +22,20 @@ type ApiResponse =
   | { ready: true; result: ResultRow; response: { nome?: string | null } };
 
 export default function ResultView({ responseId }: { responseId: string }) {
-  const [data, setData] = useState<ApiResponse | null>(null);
+  const [data, setData]         = useState<ApiResponse | null>(null);
   const [ctaClicked, setCtaClicked] = useState(false);
-  const [chosen, setChosen] = useState<number | null>(null);
+  const [chosen, setChosen]     = useState<ActionType | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     async function poll() {
       while (!cancelled) {
-        const res = await fetch(`/api/diagnostico/${responseId}`, {
-          cache: "no-store",
-        });
+        const res  = await fetch(`/api/diagnostico/${responseId}`, { cache: "no-store" });
         const json = (await res.json()) as ApiResponse;
         if (json.ready) {
           setData(json);
-          if (typeof json.result.chosen_acao_index === "number") {
-            setChosen(json.result.chosen_acao_index);
+          if (json.result.chosen_action_type) {
+            setChosen(json.result.chosen_action_type as ActionType);
           }
           return;
         }
@@ -41,17 +43,15 @@ export default function ResultView({ responseId }: { responseId: string }) {
       }
     }
     poll();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [responseId]);
 
-  async function pickAction(i: number) {
-    setChosen(i);
+  async function pickAction(type: ActionType) {
+    setChosen(type);
     await fetch(`/api/diagnostico/${responseId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chosen_acao_index: i }),
+      body: JSON.stringify({ chosen_action_type: type }),
     });
   }
 
@@ -68,91 +68,236 @@ export default function ResultView({ responseId }: { responseId: string }) {
     return <ResultSkeleton />;
   }
 
-  const { result } = data;
-  const acoes = Array.isArray(result.acoes) ? result.acoes : [];
-  const scores = normalizeScores(result.scores);
-  const ctaReady = chosen !== null;
+  const { result, response } = data;
+  const nome      = response?.nome;
+  const ctaReady  = chosen !== null;
+
+  const phaseEd   = PHASE_EDITORIAL[result.phase.name];
+  const pathwayEd = PATHWAY_EDITORIAL[result.pathway.name];
 
   return (
-    <div className="max-w-2xl w-full space-y-12">
-      <header className="space-y-3">
+    <div className="max-w-2xl w-full space-y-20">
+
+      {/* ═══════════════════════════════════════════════
+          SEU MOMENTO — Fase
+      ═══════════════════════════════════════════════ */}
+      <section className="space-y-6">
         <p className="text-xs uppercase tracking-[0.25em] text-accent font-medium">
-          Seu perfil
+          Seu momento
         </p>
-        <h1 className="font-display text-4xl sm:text-5xl tracking-tight leading-tight">
-          {PROFILE_LABELS[result.result_profile]}
-        </h1>
-      </header>
 
-      <article className="space-y-5 font-display text-lg sm:text-xl leading-relaxed text-foreground/90">
-        {result.interpretacao.split(/\n\n+/).map((p, i) => (
-          <p key={i}>{p}</p>
-        ))}
-      </article>
-
-      <ScoresBar scores={scores} dominant={result.result_profile} />
-
-      <section className="space-y-5">
-        <div className="space-y-2">
-          <h2 className="font-display text-2xl sm:text-3xl tracking-tight">
-            Escolha uma pra começar
-          </h2>
-          <p className="text-muted leading-relaxed">
-            Escolha <strong className="text-foreground">uma</strong> dessas 3 ações pra ser o quebra-gelo da
-            sua primeira conversa com a DRUM. Pode fazer durante os próximos 30
-            dias — o mentor vai te perguntar como foi.
+        <div className="space-y-4">
+          <h1 className="font-display text-4xl sm:text-5xl tracking-tight leading-tight">
+            {result.phase.name}
+          </h1>
+          {/* AI short description — personalised */}
+          <p className="font-display text-lg sm:text-xl leading-relaxed text-foreground/90">
+            {result.phase.short_description}
           </p>
         </div>
-        <div className="space-y-3">
-          {acoes.map((a, i) => {
-            const isChosen = chosen === i;
-            return (
-              <button
-                key={i}
-                onClick={() => pickAction(i)}
-                className={`w-full text-left flex items-start gap-4 p-4 sm:p-5 rounded-2xl border transition ${
-                  isChosen
-                    ? "bg-accent-soft border-accent shadow-sm"
-                    : "bg-surface border-subtle hover:border-accent/40"
-                }`}
-              >
-                <span
-                  className={`mt-1 shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition ${
-                    isChosen ? "border-accent bg-accent" : "border-muted/40"
-                  }`}
-                  aria-hidden="true"
-                >
-                  {isChosen && (
-                    <span className="w-2 h-2 rounded-full bg-background" />
-                  )}
-                </span>
-                <span
-                  className={`text-base sm:text-lg leading-snug ${
-                    isChosen ? "text-foreground" : "text-foreground/85"
-                  }`}
-                >
-                  {a}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-        {chosen === null && (
-          <p className="text-xs text-muted">
-            Selecione uma pra liberar o próximo passo.
-          </p>
+
+        {/* Phase journey visual */}
+        <PhaseJourney current={result.phase.name} />
+
+        {/* Editorial: fixed definition */}
+        {phaseEd && (
+          <div className="space-y-4 pt-2 border-t border-subtle">
+            <div className="space-y-2">
+              <p className="text-xs uppercase tracking-widest text-muted">
+                O que é essa fase
+              </p>
+              <p className="text-sm text-foreground/80 leading-relaxed">
+                {phaseEd.definition}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-xs uppercase tracking-widest text-muted">
+                O que costuma aparecer aqui
+              </p>
+              <p className="text-sm text-foreground/80 leading-relaxed">
+                {phaseEd.common_conflicts}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* AI personal_connection — what was seen in THIS person */}
+        {result.phase.personal_connection && (
+          <blockquote className="border-l-2 border-accent pl-4 space-y-1">
+            <p className="text-xs uppercase tracking-widest text-accent">
+              O que vimos em você
+            </p>
+            <p className="text-sm text-foreground/85 leading-relaxed italic">
+              {result.phase.personal_connection}
+            </p>
+          </blockquote>
         )}
       </section>
 
-      {result.anxiety_level != null && (
+      {/* ═══════════════════════════════════════════════
+          SEU CAMINHO — Trajetória
+      ═══════════════════════════════════════════════ */}
+      <section className="space-y-6">
+        <p className="text-xs uppercase tracking-[0.25em] text-accent font-medium">
+          Seu caminho
+        </p>
+
+        <div className="space-y-4">
+          <h2 className="font-display text-3xl sm:text-4xl tracking-tight leading-tight">
+            {result.pathway.name}
+          </h2>
+          <p className="font-display text-lg sm:text-xl leading-relaxed text-foreground/90">
+            {result.pathway.short_description}
+          </p>
+        </div>
+
+        {/* Editorial: fixed definition */}
+        {pathwayEd && (
+          <div className="space-y-4 pt-2 border-t border-subtle">
+            <div className="space-y-2">
+              <p className="text-xs uppercase tracking-widest text-muted">
+                O que é essa trajetória
+              </p>
+              <p className="text-sm text-foreground/80 leading-relaxed">
+                {pathwayEd.definition}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-xs uppercase tracking-widest text-muted">
+                Na prática
+              </p>
+              <p className="text-sm text-foreground/80 leading-relaxed">
+                {pathwayEd.in_practice}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* AI personal_fit */}
+        {result.pathway.personal_fit && (
+          <blockquote className="border-l-2 border-accent pl-4 space-y-1">
+            <p className="text-xs uppercase tracking-widest text-accent">
+              Por que esse caminho para você
+            </p>
+            <p className="text-sm text-foreground/85 leading-relaxed italic">
+              {result.pathway.personal_fit}
+            </p>
+          </blockquote>
+        )}
+
+        {/* Clarity card */}
+        <ClarityCard clarity={result.clarity} />
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          SEU DESAFIO — Tensão + Ações
+      ═══════════════════════════════════════════════ */}
+      <section className="space-y-6">
+        <p className="text-xs uppercase tracking-[0.25em] text-accent font-medium">
+          Seu desafio
+        </p>
+
+        <div className="space-y-4">
+          <h2 className="font-display text-3xl sm:text-4xl tracking-tight leading-tight">
+            {result.tension.name}
+          </h2>
+          <p className="font-display text-lg sm:text-xl leading-relaxed text-foreground/90">
+            {result.tension.short_description}
+          </p>
+        </div>
+
+        {/* AI personal_detail */}
+        {result.tension.personal_detail && (
+          <blockquote className="border-l-2 border-accent pl-4 space-y-1">
+            <p className="text-xs uppercase tracking-widest text-accent">
+              Como isso aparece em você
+            </p>
+            <p className="text-sm text-foreground/85 leading-relaxed italic">
+              {result.tension.personal_detail}
+            </p>
+          </blockquote>
+        )}
+
+        {/* Actions */}
+        <div className="space-y-5 pt-4">
+          <div className="space-y-2">
+            <h3 className="font-display text-2xl tracking-tight">
+              Escolha uma pra começar
+            </h3>
+            <p className="text-muted leading-relaxed text-sm">
+              Escolha <strong className="text-foreground">uma</strong> dessas 3
+              ações como abertura da sua primeira conversa com a DRUM. O mentor
+              vai te perguntar como foi.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            {result.actions.map((action) => {
+              const isChosen = chosen === action.type;
+              return (
+                <button
+                  key={action.type}
+                  onClick={() => pickAction(action.type)}
+                  className={`w-full text-left p-5 rounded-2xl border transition space-y-2 ${
+                    isChosen
+                      ? "bg-accent-soft border-accent shadow-sm"
+                      : "bg-surface border-subtle hover:border-accent/40"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition ${
+                        isChosen ? "border-accent bg-accent" : "border-muted/40"
+                      }`}
+                      aria-hidden="true"
+                    >
+                      {isChosen && (
+                        <span className="w-2 h-2 rounded-full bg-background" />
+                      )}
+                    </span>
+                    <span className="text-xs uppercase tracking-widest text-muted font-medium">
+                      {ACTION_TYPE_LABELS[action.type]}
+                    </span>
+                  </div>
+                  <p className={`text-base sm:text-lg font-medium leading-snug ${
+                    isChosen ? "text-foreground" : "text-foreground/85"
+                  }`}>
+                    {action.title}
+                  </p>
+                  <p className="text-sm text-muted leading-relaxed">
+                    {action.description}
+                  </p>
+                  {isChosen && (
+                    <p className="text-xs text-accent/80 leading-relaxed pt-1 border-t border-accent/20">
+                      {action.why_this_action}
+                    </p>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {!chosen && (
+            <p className="text-xs text-muted">
+              Selecione uma ação para liberar o próximo passo.
+            </p>
+          )}
+        </div>
+      </section>
+
+      {/* ── Ansiedade (discreta, se existir) ──────────── */}
+      {result.metadata?.anxiety_score_1_to_5 != null && (
         <p className="text-sm text-muted">
           Ansiedade declarada hoje:{" "}
           <span className="text-foreground font-medium">
-            {result.anxiety_level}/5
+            {result.metadata.anxiety_score_1_to_5}/5
           </span>
         </p>
       )}
 
+      {/* ═══════════════════════════════════════════════
+          CTA
+      ═══════════════════════════════════════════════ */}
       <div className="pt-8 border-t border-subtle space-y-3">
         <button
           onClick={clickCta}
@@ -162,98 +307,166 @@ export default function ResultView({ responseId }: { responseId: string }) {
           {ctaClicked || result.clicked_cta
             ? "Anotado — entraremos em contato"
             : ctaReady
-              ? "Marcar conversa com a DRUM"
+              ? `Marcar conversa com a DRUM${nome ? `, ${nome}` : ""}`
               : "Escolha uma ação acima"}
         </button>
         <p className="text-xs text-muted text-center">
-          Sem cobrança. A gente te chama por email pra marcar a primeira
-          conversa.
+          Sem cobrança. A gente te chama por email para marcar a primeira conversa.
+        </p>
+      </div>
+
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// PHASE JOURNEY — horizontal track showing progression
+// ─────────────────────────────────────────────────────────────
+
+function PhaseJourney({ current }: { current: Phase }) {
+  const idx = PHASES.indexOf(current);
+
+  return (
+    <div className="pt-1">
+      {/* Track with nodes */}
+      <div className="relative flex items-center">
+        {/* Background connecting line */}
+        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-subtle" />
+
+        {PHASES.map((phase, i) => {
+          const isActive = i === idx;
+          const isPast   = i < idx;
+
+          return (
+            <div key={phase} className="relative flex-1 flex flex-col items-center gap-2">
+              {/* Node */}
+              <div
+                className={`relative z-10 rounded-full transition-all duration-500 ${
+                  isActive
+                    ? "w-3.5 h-3.5 bg-accent shadow-[0_0_0_3px_var(--color-background),0_0_0_4px_var(--color-accent)]"
+                    : isPast
+                      ? "w-2.5 h-2.5 bg-accent/40"
+                      : "w-2.5 h-2.5 bg-subtle border border-muted/30"
+                }`}
+              />
+              {/* Label */}
+              <span
+                className={`text-[10px] leading-none text-center hidden sm:block max-w-[60px] transition-colors ${
+                  isActive
+                    ? "text-accent font-semibold"
+                    : isPast
+                      ? "text-muted/60"
+                      : "text-muted/30"
+                }`}
+              >
+                {phase}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Mobile: only show current phase name */}
+      <p className="sm:hidden text-xs text-accent font-medium mt-3 text-center">
+        {current} · passo {idx + 1} de {PHASES.length}
+      </p>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// CLARITY CARD — score is the hero
+// ─────────────────────────────────────────────────────────────
+
+const CLARITY_DESCRIPTIONS: Record<ClarityLabel, string> = {
+  "Difusa":        "A direção ainda está muito aberta. Faz sentido explorar antes de apostar.",
+  "Emergente":     "Há sinais de uma direção, mas ainda faltam ancoragem e consistência.",
+  "Em construção": "Uma direção está se formando. O foco agora é consolidar e testar.",
+  "Clara":         "A direção está bem definida. O desafio é avançar com mais consistência.",
+  "Muito clara":   "Direção sólida e sustentada. O foco é execução e profundidade.",
+};
+
+function ClarityCard({ clarity }: { clarity: Diagnostico["clarity"] }) {
+  const label = clarity.label as ClarityLabel;
+  const pct   = Math.round((clarity.total_points_0_to_10 / 10) * 100);
+
+  return (
+    <div className="bg-surface border border-subtle rounded-2xl p-5 sm:p-6">
+      <div className="flex items-start justify-between gap-4">
+        {/* Score hero */}
+        <div className="space-y-0.5">
+          <p className="text-xs uppercase tracking-widest text-muted">
+            Clareza de direção
+          </p>
+          <p className="font-display text-5xl tracking-tight leading-none text-foreground">
+            {clarity.total_points_0_to_10}
+            <span className="text-2xl text-muted/60">/10</span>
+          </p>
+          <p className="text-sm text-accent font-medium">{label}</p>
+        </div>
+
+        {/* Mini criteria dots */}
+        <div className="grid grid-cols-5 gap-1 pt-1">
+          {Object.values(clarity.criteria).map((c, i) => (
+            <div key={i} className="flex flex-col items-center gap-0.5">
+              <div
+                className={`w-6 h-6 rounded-md flex items-center justify-center text-xs font-mono font-medium ${
+                  c.score_0_to_2 === 2
+                    ? "bg-accent text-background"
+                    : c.score_0_to_2 === 1
+                      ? "bg-accent/20 text-accent"
+                      : "bg-subtle text-muted/50"
+                }`}
+              >
+                {c.score_0_to_2}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Progress bar */}
+      <div className="mt-4 space-y-1.5">
+        <div className="h-1.5 bg-subtle rounded-full overflow-hidden">
+          <div
+            className="h-full bg-accent transition-all duration-700"
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+        <p className="text-xs text-muted leading-relaxed">
+          {CLARITY_DESCRIPTIONS[label]}
         </p>
       </div>
     </div>
   );
 }
 
-function normalizeScores(raw: unknown): Record<Profile, number> {
-  const out: Record<Profile, number> = {
-    paralisado_por_opcao: 0,
-    atrasado: 0,
-    executor_sem_norte: 0,
-    esperando_permissao: 0,
-  };
-  if (raw && typeof raw === "object") {
-    for (const p of PROFILES) {
-      const v = (raw as Record<string, unknown>)[p];
-      if (typeof v === "number") out[p] = v;
-    }
-  }
-  return out;
-}
-
-function ScoresBar({
-  scores,
-  dominant,
-}: {
-  scores: Record<Profile, number>;
-  dominant: Profile;
-}) {
-  return (
-    <section className="space-y-3 bg-surface border border-subtle rounded-2xl p-5 sm:p-6">
-      <p className="text-xs uppercase tracking-widest text-muted">
-        Distribuição dos perfis
-      </p>
-      <div className="space-y-2">
-        {PROFILES.map((p) => {
-          const v = scores[p] ?? 0;
-          const pct = Math.round(v * 100);
-          const isDom = p === dominant;
-          return (
-            <div key={p} className="grid grid-cols-[1fr_auto] gap-3 items-center">
-              <div className="flex flex-col gap-1">
-                <div className="flex justify-between text-sm">
-                  <span
-                    className={
-                      isDom ? "text-foreground font-medium" : "text-muted"
-                    }
-                  >
-                    {PROFILE_LABELS[p]}
-                  </span>
-                </div>
-                <div className="h-1.5 bg-subtle rounded-full overflow-hidden">
-                  <div
-                    className={`h-full ${isDom ? "bg-accent" : "bg-muted/40"} transition-all duration-700`}
-                    style={{ width: `${pct}%` }}
-                  />
-                </div>
-              </div>
-              <span className="text-xs text-muted font-mono w-10 text-right">
-                {pct}%
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
+// ─────────────────────────────────────────────────────────────
+// SKELETON
+// ─────────────────────────────────────────────────────────────
 
 function ResultSkeleton() {
   return (
-    <div className="max-w-2xl w-full space-y-12 animate-pulse">
-      <div className="space-y-3">
-        <div className="h-3 w-24 bg-subtle rounded" />
-        <div className="h-12 w-3/4 bg-subtle rounded" />
-      </div>
-      <div className="space-y-3">
+    <div className="max-w-2xl w-full space-y-20 animate-pulse">
+      <div className="space-y-4">
+        <div className="h-3 w-20 bg-subtle rounded" />
+        <div className="h-12 w-2/3 bg-subtle rounded" />
         <div className="h-5 w-full bg-subtle rounded" />
-        <div className="h-5 w-11/12 bg-subtle rounded" />
         <div className="h-5 w-10/12 bg-subtle rounded" />
-        <div className="h-5 w-9/12 bg-subtle rounded" />
+        <div className="h-8 w-full bg-subtle rounded-full" />
       </div>
-      <div className="space-y-3">
-        <div className="h-16 bg-subtle rounded-2xl" />
-        <div className="h-16 bg-subtle rounded-2xl" />
-        <div className="h-16 bg-subtle rounded-2xl" />
+      <div className="space-y-4">
+        <div className="h-3 w-20 bg-subtle rounded" />
+        <div className="h-10 w-1/2 bg-subtle rounded" />
+        <div className="h-5 w-full bg-subtle rounded" />
+        <div className="h-28 bg-subtle rounded-2xl" />
+      </div>
+      <div className="space-y-4">
+        <div className="h-3 w-24 bg-subtle rounded" />
+        <div className="h-10 w-3/4 bg-subtle rounded" />
+        <div className="h-20 bg-subtle rounded-2xl" />
+        <div className="h-20 bg-subtle rounded-2xl" />
+        <div className="h-20 bg-subtle rounded-2xl" />
       </div>
     </div>
   );
