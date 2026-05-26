@@ -300,30 +300,45 @@ Durante a conversa, o agente não interpreta, não classifica e não devolve con
 
 ## 9. As 4 fases de carreira — definição oficial
 
-A fase representa como a pessoa se relaciona com identidade, construção e decisão profissional. **Não representa idade, senioridade ou nível de experiência.**
+A fase representa como a pessoa se relaciona com identidade, construção e decisão profissional.
 
 As únicas fases válidas são:
 
 1. Exploração
 2. Direção
 3. Consolidação
-4. Legado
+4. Transição
 
-**Autoria e Reposicionamento foram removidas** por gerarem ambiguidade de classificação. Os sinais que essas fases capturavam são absorvidos por Direção e Exploração respectivamente.
+**Autoria e Reposicionamento foram removidas** por gerarem ambiguidade de classificação. Autoria é absorvida por Direção. Reposicionamento é absorvido por Transição (ou Exploração quando o campo foi reaberto).
+
+### Idade como prior de fase
+
+A idade da pessoa é um sinal auxiliar — não determinante, mas útil como prior quando os sinais da conversa forem ambíguos. Se a fala for clara, ela prevalece. Se for ambígua, a faixa de idade inclina a decisão.
+
+| Fase | Faixa de referência | Contexto típico |
+|---|---|---|
+| Exploração | 18–28 | Recém-formado, primeiro contato com o mercado, saiu de algo e está recomeçando |
+| Direção | 24–35 | Tem uma aposta emergindo, construindo convicção sobre o caminho |
+| Consolidação | 30–50 | Trajetória definida, foco em tração, profundidade e crescimento |
+| Transição | 38+ | Pós-construção — revisando o que faz sentido ou orientando para impacto duradouro |
+
+**Importante:** as faixas se sobrepõem propositalmente. Uma pessoa de 22 pode estar em Direção. Uma de 48 pode estar em Exploração depois de uma mudança de carreira. A idade é um prior, não uma regra.
 
 ---
 
 ### Exploração
 
+**Faixa de referência:** 18–28 (não absoluta)
+
 **O que é:**
-A pessoa está num momento de campo aberto — muitas possibilidades, poucas apostas firmes. A identidade profissional está sendo testada mais do que construída. Também cobre quem está saindo de um caminho anterior e reabrindo o campo (o que antes era Reposicionamento).
+A pessoa está num momento de campo aberto — muitas possibilidades, poucas apostas firmes. A identidade profissional está sendo testada mais do que construída. Também cobre quem saiu de um caminho anterior e reabriu o campo.
 
 **Sinais na fala:**
 - Muitas possibilidades abertas ao mesmo tempo
 - Busca de repertório, referências, experiências
 - Pouco compromisso com uma direção específica
 - Curiosidade difusa, medo de escolher errado
-- Algo deixou de fazer sentido e a pessoa está recalibrando
+- Algo deixou de fazer sentido e a pessoa está recalibrando o ponto de partida
 
 **Falas típicas:**
 > "Ainda estou tentando entender o que combina comigo."
@@ -335,6 +350,8 @@ A pessoa está num momento de campo aberto — muitas possibilidades, poucas apo
 ---
 
 ### Direção
+
+**Faixa de referência:** 24–35 (não absoluta)
 
 **O que é:**
 A pessoa tem uma aposta — um caminho que parece mais verdadeiro do que os outros. O trabalho agora é converter essa convicção em construção real. Também cobre quem sente tensão entre o que quer construir e o que se espera dela (o que antes era Autoria).
@@ -357,6 +374,8 @@ A pessoa tem uma aposta — um caminho que parece mais verdadeiro do que os outr
 
 ### Consolidação
 
+**Faixa de referência:** 30–50 (não absoluta)
+
 **O que é:**
 A trajetória está em movimento — há um caminho definido e a pessoa está construindo tração, competência e consistência ao longo dele. A pergunta não é mais "para onde vou" mas "como sustento e aprofundo o que estou construindo".
 
@@ -374,23 +393,31 @@ A trajetória está em movimento — há um caminho definido e a pessoa está co
 
 ---
 
-### Legado
+### Transição
+
+**Faixa de referência:** 38+ (não absoluta)
 
 **O que é:**
-A pessoa está orientada para construir algo duradouro — impacto, contribuição e significado além do desempenho individual. Não tem a ver com idade ou senioridade. É uma orientação de carreira: a pergunta deixou de ser "o que eu vou fazer" e passou a ser "o que eu quero que dure".
+A pessoa está num momento em que algo mudou ou está mudando na sua relação com a carreira. Cobre dois padrões que aparecem na mesma faixa etária pós-construção:
+
+1. **Orientação para impacto duradouro:** a pergunta deixou de ser "o que eu vou fazer" e passou a ser "o que eu quero que dure" — construção para além do desempenho individual.
+2. **Recalibração pós-capítulo:** algo chegou ao fim, um capítulo se fechou, e a pessoa está desenhando o próximo — com mais experiência e menos urgência do que na Exploração.
+
+O que une os dois: ambos acontecem depois que a pessoa já construiu algo. Não é início de trajetória — é revisão ou reorientação de uma trajetória que já existe.
 
 **Sinais na fala:**
-- Orientação para impacto e contribuição
-- Construção de algo que vai além de resultados pessoais
-- Desejo de deixar algo que persista
-- Foco em transferência de conhecimento, formação de outros, institucionalização
+- Orientação para impacto, contribuição, algo que dure além de si
+- Algo deixou de fazer sentido depois de um ciclo longo
+- Pergunta sobre o que importa construir agora
+- Vontade de transmitir, formar, institucionalizar
+- Cansaço com o que já foi consolidado, busca de novo significado
 
 **Falas típicas:**
 > "Quero deixar algo."
 > "Quero construir algo que dure além de mim."
-> "Quero contribuir para algo maior."
-> "Quero que o que estou fazendo tenha impacto real no campo."
+> "Esse capítulo chegou ao fim — estou pensando no que vem depois."
 > "Não quero apenas crescer — quero que isso signifique algo."
+> "Quero contribuir de uma forma diferente do que venho fazendo."
 
 ---
 
@@ -599,7 +626,7 @@ Esse mapeamento é apenas registro histórico. O sistema novo **NÃO** deve menc
 
 A arquitetura oficial do produto agora é:
 
-1. **Fase** (4 opções: Exploração · Direção · Consolidação · Legado)
+1. **Fase** (4 opções: Exploração · Direção · Consolidação · Transição)
 2. **Trajetória** (7 opções)
 3. **Índice de clareza de trajetória** (3 níveis: Incerta · Em formação · Clara)
 4. **Tensão** (8 opções)
@@ -610,6 +637,6 @@ Não usar mais:
 - arquétipos
 - categorias híbridas
 - operador, alocador, especialista
-- fases Autoria e Reposicionamento
+- fases Autoria, Reposicionamento e Legado (substituída por Transição)
 
 O produto deve permanecer **simples, editorial, humano e não classificatório.**

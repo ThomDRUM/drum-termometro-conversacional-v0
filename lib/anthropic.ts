@@ -51,25 +51,34 @@ As 4 fases válidas:
 - Exploração
 - Direção
 - Consolidação
-- Legado
+- Transição
 
-### Como identificar:
+### Idade como prior
 
-**Exploração**
-Campo aberto, muitas possibilidades, poucas apostas firmes. Também cobre quem está recalibrando depois de algo que deixou de fazer sentido.
-Sinais: curiosidade difusa, medo de escolher errado, "não sei o que quero", "tenho muitas opções", "isso já não faz sentido, preciso reavaliar".
+A idade capturada na conversa é um sinal auxiliar. Se os sinais da fala forem ambíguos, use a idade para inclinar a decisão:
+- 18–28: prior para Exploração
+- 24–35: prior para Direção
+- 30–50: prior para Consolidação
+- 38+: prior para Transição
 
-**Direção**
+As faixas se sobrepõem. Se a fala for clara, ela prevalece sobre a idade. Se for ambígua, a idade desempata.
+
+### Como identificar cada fase:
+
+**Exploração** (prior: 18–28)
+Campo aberto, muitas possibilidades, poucas apostas firmes. Também cobre quem saiu de um caminho anterior e reabriu o campo.
+Sinais: curiosidade difusa, medo de escolher errado, "não sei o que quero", "tenho muitas opções", "isso já não faz sentido, preciso recomeçar".
+
+**Direção** (prior: 24–35)
 Tem uma aposta, está construindo convicção. Também cobre quem sente tensão entre o que quer e o que esperam dela.
 Sinais: um vetor começa a aparecer, quer priorizar, "acho que esse caminho faz mais sentido", "não sei se isso é meu ou o que esperam de mim", "quero construir algo com minha assinatura".
 
-**Consolidação**
+**Consolidação** (prior: 30–50)
 Trajetória em movimento, foco é tração e profundidade.
 Sinais: caminho definido, pergunta sobre como sustentar, "já sei o que estou construindo", "preciso ganhar tração", "quero aprofundar".
 
-**Legado**
-Orientado para contribuição e impacto duradouro na carreira — não tem a ver com idade ou família.
-Sinais: "quero deixar algo", "quero construir algo que dure", "quero que isso signifique algo além de mim".
+**Transição** (prior: 38+)
+Cobre dois padrões pós-construção: (1) orientação para impacto duradouro — "quero deixar algo que dure", "quero contribuir para além de mim"; (2) recalibração depois de um ciclo — "esse capítulo chegou ao fim", "estou redesenhando o que vem depois". O que une os dois: a pessoa já construiu algo e está se perguntando o que vem agora.
 
 ---
 
@@ -157,7 +166,7 @@ Responda APENAS com um objeto JSON válido. Sem texto antes ou depois. Sem cerca
 
 {
   "phase": {
-    "name": "<uma das 4 fases>",
+    "name": "<Exploração, Direção, Consolidação ou Transição>",
     "short_description": "<1-2 frases dirigidas à pessoa com 'você', começando com 'O que aparece...' ou 'O que chama atenção...' — específico para essa conversa>",
     "confidence": <0.0 a 1.0>,
     "evidence": ["<algo que a pessoa disse>", "..."]
@@ -209,6 +218,7 @@ Responda APENAS com um objeto JSON válido. Sem texto antes ou depois. Sem cerca
   "metadata": {
     "anxiety_score_1_to_5": <1-5 ou null>,
     "conversation_duration_seconds": <número ou null>,
+    "idade": <número ou null — extraia da fala se mencionado>,
     "mentioned_people": ["<nomes mencionados>"],
     "mentioned_projects": ["<projetos mencionados>"],
     "raw_summary": "<resumo neutro de 2-3 frases do que a pessoa disse, sem interpretação>"

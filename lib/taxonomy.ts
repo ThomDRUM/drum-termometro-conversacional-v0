@@ -13,7 +13,7 @@ export const PHASES = [
   "Exploração",
   "Direção",
   "Consolidação",
-  "Legado",
+  "Transição",
 ] as const;
 
 export type Phase = (typeof PHASES)[number];
@@ -114,11 +114,11 @@ export const PHASE_EDITORIAL: Record<Phase, PhaseEditorial> = {
     common_conflicts:
       "O desafio aqui é manter o fio do que você quer construir quando surgem oportunidades atraentes que puxam para fora do seu eixo. Consistência exige escolher o que não fazer.",
   },
-  "Legado": {
+  "Transição": {
     definition:
-      "Você está num momento em que a carreira passou a ter uma orientação maior — construir algo que dure, que contribua, que vá além do seu desempenho individual.",
+      "Você está num momento em que algo mudou ou está mudando na sua relação com a carreira — seja porque quer construir algo com impacto mais duradouro, seja porque um capítulo chegou ao fim e o próximo ainda está sendo desenhado.",
     common_conflicts:
-      "A tensão típica é entre o desejo de impacto e a impaciência com os resultados de curto prazo. Construir para durar exige uma lógica diferente de construir para crescer.",
+      "O desafio típico é o período de ambiguidade entre o que foi e o que vai ser. Há clareza sobre o que não faz mais sentido, mas a nova direção ainda está se formando — e isso exige tolerância ao espaço entre.",
   },
 };
 
@@ -221,6 +221,7 @@ export type Action = {
 export type DiagnosticoMetadata = {
   anxiety_score_1_to_5: number | null;
   conversation_duration_seconds: number | null;
+  idade: number | null;
   mentioned_people: string[];
   mentioned_projects: string[];
   raw_summary: string;
@@ -244,7 +245,7 @@ export const FALLBACK_DIAGNOSTICO: Diagnostico = {
   phase: {
     name: "Exploração",
     short_description:
-      "O que aparece é um momento de campo aberto — muitas possibilidades à vista, ainda sem uma aposta clara.",
+      "O que aparece na sua fala é um momento de campo aberto — muitas possibilidades à vista, ainda sem uma aposta clara.",
     confidence: 0.5,
     evidence: [],
   },
@@ -303,6 +304,7 @@ export const FALLBACK_DIAGNOSTICO: Diagnostico = {
   metadata: {
     anxiety_score_1_to_5: null,
     conversation_duration_seconds: null,
+    idade: null,
     mentioned_people: [],
     mentioned_projects: [],
     raw_summary: "Diagnóstico gerado com fallback — conversa não pôde ser processada.",
