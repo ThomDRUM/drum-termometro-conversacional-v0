@@ -22,9 +22,9 @@ type ApiResponse =
   | { ready: true; result: ResultRow; response: { nome?: string | null } };
 
 export default function ResultView({ responseId }: { responseId: string }) {
-  const [data, setData]         = useState<ApiResponse | null>(null);
+  const [data, setData]             = useState<ApiResponse | null>(null);
   const [ctaClicked, setCtaClicked] = useState(false);
-  const [chosen, setChosen]     = useState<ActionType | null>(null);
+  const [chosen, setChosen]         = useState<ActionType | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -64,14 +64,11 @@ export default function ResultView({ responseId }: { responseId: string }) {
     });
   }
 
-  if (!data || !data.ready) {
-    return <ResultSkeleton />;
-  }
+  if (!data || !data.ready) return <ResultSkeleton />;
 
   const { result, response } = data;
   const nome      = response?.nome;
   const ctaReady  = chosen !== null;
-
   const phaseEd   = PHASE_EDITORIAL[result.phase.name];
   const pathwayEd = PATHWAY_EDITORIAL[result.pathway.name];
 
@@ -86,51 +83,28 @@ export default function ResultView({ responseId }: { responseId: string }) {
           Seu momento
         </p>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           <h1 className="font-display text-4xl sm:text-5xl tracking-tight leading-tight">
             {result.phase.name}
           </h1>
-          {/* AI short description — personalised */}
           <p className="font-display text-lg sm:text-xl leading-relaxed text-foreground/90">
             {result.phase.short_description}
           </p>
         </div>
 
-        {/* Phase journey visual */}
         <PhaseJourney current={result.phase.name} />
 
-        {/* Editorial: fixed definition */}
         {phaseEd && (
           <div className="space-y-4 pt-2 border-t border-subtle">
-            <div className="space-y-2">
-              <p className="text-xs uppercase tracking-widest text-muted">
-                O que é essa fase
-              </p>
-              <p className="text-sm text-foreground/80 leading-relaxed">
-                {phaseEd.definition}
-              </p>
+            <div className="space-y-1.5">
+              <p className="text-xs uppercase tracking-widest text-muted">O que é essa fase</p>
+              <p className="text-sm text-foreground/80 leading-relaxed">{phaseEd.definition}</p>
             </div>
-            <div className="space-y-2">
-              <p className="text-xs uppercase tracking-widest text-muted">
-                O que costuma aparecer aqui
-              </p>
-              <p className="text-sm text-foreground/80 leading-relaxed">
-                {phaseEd.common_conflicts}
-              </p>
+            <div className="space-y-1.5">
+              <p className="text-xs uppercase tracking-widest text-muted">O que costuma aparecer aqui</p>
+              <p className="text-sm text-foreground/80 leading-relaxed">{phaseEd.common_conflicts}</p>
             </div>
           </div>
-        )}
-
-        {/* AI personal_connection — what was seen in THIS person */}
-        {result.phase.personal_connection && (
-          <blockquote className="border-l-2 border-accent pl-4 space-y-1">
-            <p className="text-xs uppercase tracking-widest text-accent">
-              O que vimos em você
-            </p>
-            <p className="text-sm text-foreground/85 leading-relaxed italic">
-              {result.phase.personal_connection}
-            </p>
-          </blockquote>
         )}
       </section>
 
@@ -142,7 +116,7 @@ export default function ResultView({ responseId }: { responseId: string }) {
           Seu caminho
         </p>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           <h2 className="font-display text-3xl sm:text-4xl tracking-tight leading-tight">
             {result.pathway.name}
           </h2>
@@ -151,41 +125,19 @@ export default function ResultView({ responseId }: { responseId: string }) {
           </p>
         </div>
 
-        {/* Editorial: fixed definition */}
         {pathwayEd && (
           <div className="space-y-4 pt-2 border-t border-subtle">
-            <div className="space-y-2">
-              <p className="text-xs uppercase tracking-widest text-muted">
-                O que é essa trajetória
-              </p>
-              <p className="text-sm text-foreground/80 leading-relaxed">
-                {pathwayEd.definition}
-              </p>
+            <div className="space-y-1.5">
+              <p className="text-xs uppercase tracking-widest text-muted">O que essa trajetória implica</p>
+              <p className="text-sm text-foreground/80 leading-relaxed">{pathwayEd.definition}</p>
             </div>
-            <div className="space-y-2">
-              <p className="text-xs uppercase tracking-widest text-muted">
-                Na prática
-              </p>
-              <p className="text-sm text-foreground/80 leading-relaxed">
-                {pathwayEd.in_practice}
-              </p>
+            <div className="space-y-1.5">
+              <p className="text-xs uppercase tracking-widest text-muted">Na prática</p>
+              <p className="text-sm text-foreground/80 leading-relaxed">{pathwayEd.in_practice}</p>
             </div>
           </div>
         )}
 
-        {/* AI personal_fit */}
-        {result.pathway.personal_fit && (
-          <blockquote className="border-l-2 border-accent pl-4 space-y-1">
-            <p className="text-xs uppercase tracking-widest text-accent">
-              Por que esse caminho para você
-            </p>
-            <p className="text-sm text-foreground/85 leading-relaxed italic">
-              {result.pathway.personal_fit}
-            </p>
-          </blockquote>
-        )}
-
-        {/* Clarity card */}
         <ClarityCard clarity={result.clarity} />
       </section>
 
@@ -197,7 +149,7 @@ export default function ResultView({ responseId }: { responseId: string }) {
           Seu desafio
         </p>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           <h2 className="font-display text-3xl sm:text-4xl tracking-tight leading-tight">
             {result.tension.name}
           </h2>
@@ -206,28 +158,11 @@ export default function ResultView({ responseId }: { responseId: string }) {
           </p>
         </div>
 
-        {/* AI personal_detail */}
-        {result.tension.personal_detail && (
-          <blockquote className="border-l-2 border-accent pl-4 space-y-1">
-            <p className="text-xs uppercase tracking-widest text-accent">
-              Como isso aparece em você
-            </p>
-            <p className="text-sm text-foreground/85 leading-relaxed italic">
-              {result.tension.personal_detail}
-            </p>
-          </blockquote>
-        )}
-
-        {/* Actions */}
-        <div className="space-y-5 pt-4">
-          <div className="space-y-2">
-            <h3 className="font-display text-2xl tracking-tight">
-              Escolha uma pra começar
-            </h3>
-            <p className="text-muted leading-relaxed text-sm">
-              Escolha <strong className="text-foreground">uma</strong> dessas 3
-              ações como abertura da sua primeira conversa com a DRUM. O mentor
-              vai te perguntar como foi.
+        <div className="space-y-5 pt-2">
+          <div className="space-y-2 border-t border-subtle pt-4">
+            <p className="text-xs uppercase tracking-widest text-muted">O mais importante agora</p>
+            <p className="text-sm text-foreground/80 leading-relaxed">
+              O que mais importa para a DRUM não é classificar onde você está — é gerar movimento a partir do seu contexto. Escolha <strong className="text-foreground">uma</strong> dessas 3 ações como ponto de partida para sua primeira conversa com um mentor. Ele vai te perguntar como foi.
             </p>
           </div>
 
@@ -251,22 +186,16 @@ export default function ResultView({ responseId }: { responseId: string }) {
                       }`}
                       aria-hidden="true"
                     >
-                      {isChosen && (
-                        <span className="w-2 h-2 rounded-full bg-background" />
-                      )}
+                      {isChosen && <span className="w-2 h-2 rounded-full bg-background" />}
                     </span>
                     <span className="text-xs uppercase tracking-widest text-muted font-medium">
                       {ACTION_TYPE_LABELS[action.type]}
                     </span>
                   </div>
-                  <p className={`text-base sm:text-lg font-medium leading-snug ${
-                    isChosen ? "text-foreground" : "text-foreground/85"
-                  }`}>
+                  <p className={`text-base sm:text-lg font-medium leading-snug ${isChosen ? "text-foreground" : "text-foreground/85"}`}>
                     {action.title}
                   </p>
-                  <p className="text-sm text-muted leading-relaxed">
-                    {action.description}
-                  </p>
+                  <p className="text-sm text-muted leading-relaxed">{action.description}</p>
                   {isChosen && (
                     <p className="text-xs text-accent/80 leading-relaxed pt-1 border-t border-accent/20">
                       {action.why_this_action}
@@ -278,14 +207,12 @@ export default function ResultView({ responseId }: { responseId: string }) {
           </div>
 
           {!chosen && (
-            <p className="text-xs text-muted">
-              Selecione uma ação para liberar o próximo passo.
-            </p>
+            <p className="text-xs text-muted">Selecione uma ação para liberar o próximo passo.</p>
           )}
         </div>
       </section>
 
-      {/* ── Ansiedade (discreta, se existir) ──────────── */}
+      {/* ── Ansiedade ─────────────────────────────────── */}
       {result.metadata?.anxiety_score_1_to_5 != null && (
         <p className="text-sm text-muted">
           Ansiedade declarada hoje:{" "}
@@ -320,7 +247,7 @@ export default function ResultView({ responseId }: { responseId: string }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// PHASE JOURNEY — horizontal track showing progression
+// PHASE JOURNEY
 // ─────────────────────────────────────────────────────────────
 
 function PhaseJourney({ current }: { current: Phase }) {
@@ -328,18 +255,13 @@ function PhaseJourney({ current }: { current: Phase }) {
 
   return (
     <div className="pt-1">
-      {/* Track with nodes */}
       <div className="relative flex items-center">
-        {/* Background connecting line */}
-        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-subtle" />
-
+        <div className="absolute inset-x-0 top-[7px] h-px bg-subtle" />
         {PHASES.map((phase, i) => {
           const isActive = i === idx;
           const isPast   = i < idx;
-
           return (
             <div key={phase} className="relative flex-1 flex flex-col items-center gap-2">
-              {/* Node */}
               <div
                 className={`relative z-10 rounded-full transition-all duration-500 ${
                   isActive
@@ -349,14 +271,9 @@ function PhaseJourney({ current }: { current: Phase }) {
                       : "w-2.5 h-2.5 bg-subtle border border-muted/30"
                 }`}
               />
-              {/* Label */}
               <span
-                className={`text-[10px] leading-none text-center hidden sm:block max-w-[60px] transition-colors ${
-                  isActive
-                    ? "text-accent font-semibold"
-                    : isPast
-                      ? "text-muted/60"
-                      : "text-muted/30"
+                className={`text-[10px] leading-none text-center hidden sm:block max-w-[64px] ${
+                  isActive ? "text-accent font-semibold" : isPast ? "text-muted/60" : "text-muted/30"
                 }`}
               >
                 {phase}
@@ -365,8 +282,6 @@ function PhaseJourney({ current }: { current: Phase }) {
           );
         })}
       </div>
-
-      {/* Mobile: only show current phase name */}
       <p className="sm:hidden text-xs text-accent font-medium mt-3 text-center">
         {current} · passo {idx + 1} de {PHASES.length}
       </p>
@@ -375,67 +290,58 @@ function PhaseJourney({ current }: { current: Phase }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// CLARITY CARD — score is the hero
+// CLARITY CARD
 // ─────────────────────────────────────────────────────────────
 
 const CLARITY_DESCRIPTIONS: Record<ClarityLabel, string> = {
-  "Difusa":        "A direção ainda está muito aberta. Faz sentido explorar antes de apostar.",
-  "Emergente":     "Há sinais de uma direção, mas ainda faltam ancoragem e consistência.",
-  "Em construção": "Uma direção está se formando. O foco agora é consolidar e testar.",
-  "Clara":         "A direção está bem definida. O desafio é avançar com mais consistência.",
-  "Muito clara":   "Direção sólida e sustentada. O foco é execução e profundidade.",
+  "Incerta":       "A trajetória ainda não está nomeada com clareza. Faz sentido explorar mais antes de apostar.",
+  "Em formação":   "Há uma direção que começa a aparecer, mas a justificativa ainda está sendo construída.",
+  "Clara":         "Você consegue nomear a trajetória e explicar por que ela faz sentido para você.",
 };
 
 function ClarityCard({ clarity }: { clarity: Diagnostico["clarity"] }) {
   const label = clarity.label as ClarityLabel;
-  const pct   = Math.round((clarity.total_points_0_to_10 / 10) * 100);
+  const pct   = Math.round((clarity.total_points_0_to_2 / 2) * 100);
 
   return (
-    <div className="bg-surface border border-subtle rounded-2xl p-5 sm:p-6">
+    <div className="bg-surface border border-subtle rounded-2xl p-5 sm:p-6 space-y-4">
       <div className="flex items-start justify-between gap-4">
-        {/* Score hero */}
         <div className="space-y-0.5">
-          <p className="text-xs uppercase tracking-widest text-muted">
-            Clareza de direção
-          </p>
+          <p className="text-xs uppercase tracking-widest text-muted">Clareza de trajetória</p>
           <p className="font-display text-5xl tracking-tight leading-none text-foreground">
-            {clarity.total_points_0_to_10}
-            <span className="text-2xl text-muted/60">/10</span>
+            {clarity.total_points_0_to_2}
+            <span className="text-2xl text-muted/60">/2</span>
           </p>
           <p className="text-sm text-accent font-medium">{label}</p>
         </div>
-
-        {/* Mini criteria dots */}
-        <div className="grid grid-cols-5 gap-1 pt-1">
-          {Object.values(clarity.criteria).map((c, i) => (
-            <div key={i} className="flex flex-col items-center gap-0.5">
+        <div className="space-y-1 pt-1 text-right">
+          {Object.entries(clarity.criteria).map(([key, c]) => (
+            <div key={key} className="flex items-center gap-2 justify-end">
+              <span className="text-[10px] text-muted/60 uppercase tracking-wide">
+                {key === "direction_naming" ? "Nomeação" : "Critério próprio"}
+              </span>
               <div
-                className={`w-6 h-6 rounded-md flex items-center justify-center text-xs font-mono font-medium ${
-                  c.score_0_to_2 === 2
+                className={`w-5 h-5 rounded flex items-center justify-center text-xs font-mono font-medium ${
+                  c.score_0_to_1 === 1
                     ? "bg-accent text-background"
-                    : c.score_0_to_2 === 1
-                      ? "bg-accent/20 text-accent"
-                      : "bg-subtle text-muted/50"
+                    : "bg-subtle text-muted/50"
                 }`}
               >
-                {c.score_0_to_2}
+                {c.score_0_to_1}
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Progress bar */}
-      <div className="mt-4 space-y-1.5">
+      <div className="space-y-1.5">
         <div className="h-1.5 bg-subtle rounded-full overflow-hidden">
           <div
             className="h-full bg-accent transition-all duration-700"
             style={{ width: `${pct}%` }}
           />
         </div>
-        <p className="text-xs text-muted leading-relaxed">
-          {CLARITY_DESCRIPTIONS[label]}
-        </p>
+        <p className="text-xs text-muted leading-relaxed">{CLARITY_DESCRIPTIONS[label]}</p>
       </div>
     </div>
   );
@@ -453,7 +359,7 @@ function ResultSkeleton() {
         <div className="h-12 w-2/3 bg-subtle rounded" />
         <div className="h-5 w-full bg-subtle rounded" />
         <div className="h-5 w-10/12 bg-subtle rounded" />
-        <div className="h-8 w-full bg-subtle rounded-full" />
+        <div className="h-6 w-full bg-subtle rounded-full" />
       </div>
       <div className="space-y-4">
         <div className="h-3 w-20 bg-subtle rounded" />

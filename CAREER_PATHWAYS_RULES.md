@@ -290,7 +290,7 @@ A fase será inferida depois pelo Claude / motor de análise, com base na transc
 ### O agente NÃO deve dizer
 
 - "Parece que você está em Exploração."
-- "Talvez você esteja em Autoria."
+- "Talvez você esteja em Direção."
 - "Vou te fazer perguntas específicas para sua fase."
 - "Sua fase provavelmente é…"
 
@@ -298,414 +298,275 @@ Durante a conversa, o agente não interpreta, não classifica e não devolve con
 
 ---
 
-## 9. Como a fase deve ser inferida
+## 9. As 4 fases de carreira — definição oficial
 
-A fase deve ser inferida depois da conversa a partir de:
+A fase representa como a pessoa se relaciona com identidade, construção e decisão profissional. **Não representa idade, senioridade ou nível de experiência.**
 
-- relação da pessoa com escolha
-- relação da pessoa com identidade
-- relação da pessoa com construção
-- conflitos centrais
-- sinais de clareza
-- sinais de travamento
-- horizonte futuro
-- linguagem usada
-- exemplos concretos
+As únicas fases válidas são:
+
+1. Exploração
+2. Direção
+3. Consolidação
+4. Legado
+
+**Autoria e Reposicionamento foram removidas** por gerarem ambiguidade de classificação. Os sinais que essas fases capturavam são absorvidos por Direção e Exploração respectivamente.
+
+---
 
 ### Exploração
 
-Sinais:
-- muitas possibilidades
-- busca de repertório
-- pouco compromisso
-- curiosidade difusa
-- medo de escolher errado
+**O que é:**
+A pessoa está num momento de campo aberto — muitas possibilidades, poucas apostas firmes. A identidade profissional está sendo testada mais do que construída. Também cobre quem está saindo de um caminho anterior e reabrindo o campo (o que antes era Reposicionamento).
 
-Falas típicas:
-> "Ainda estou tentando entender o que combina comigo."  
-> "Tenho muitas possibilidades."  
+**Sinais na fala:**
+- Muitas possibilidades abertas ao mesmo tempo
+- Busca de repertório, referências, experiências
+- Pouco compromisso com uma direção específica
+- Curiosidade difusa, medo de escolher errado
+- Algo deixou de fazer sentido e a pessoa está recalibrando
+
+**Falas típicas:**
+> "Ainda estou tentando entender o que combina comigo."
+> "Tenho muitas possibilidades."
 > "Não sei o que eu quero fazer."
+> "Isso já não faz tanto sentido, preciso reavaliar."
+> "Acho que preciso atualizar minha rota."
 
 ---
 
 ### Direção
 
-Sinais:
-- começa a aparecer um vetor
-- quer priorizar
-- precisa escolher uma aposta
-- já não quer todas as portas igualmente abertas
+**O que é:**
+A pessoa tem uma aposta — um caminho que parece mais verdadeiro do que os outros. O trabalho agora é converter essa convicção em construção real. Também cobre quem sente tensão entre o que quer construir e o que se espera dela (o que antes era Autoria).
 
-Falas típicas:
-> "Acho que esse caminho faz mais sentido."  
-> "Quero testar isso com mais intenção."  
+**Sinais na fala:**
+- Um vetor começa a aparecer com mais força
+- Quer priorizar, precisa escolher onde colocar energia
+- Ainda construindo a convicção, mas já tem uma aposta
+- Tensão entre desejo próprio e expectativa externa
+- Dúvida sobre o que é dela e o que veio de fora
+
+**Falas típicas:**
+> "Acho que esse caminho faz mais sentido."
+> "Quero testar isso com mais intenção."
 > "Preciso decidir onde coloco energia."
-
----
-
-### Autoria
-
-Sinais:
-- tensão entre desejo próprio e expectativa externa
-- dúvida sobre o que é dela e o que é herdado
-- necessidade de se autorizar
-
-Falas típicas:
-> "Não sei se isso é meu ou se é o que esperam de mim."  
-> "Tenho medo de decepcionar."  
+> "Não sei se isso é meu ou se é o que esperam de mim."
 > "Quero construir algo com minha assinatura."
 
 ---
 
 ### Consolidação
 
-Sinais:
-- já existe caminho
-- foco em consistência, competência e tração
-- pergunta sobre sustentar o caminho
+**O que é:**
+A trajetória está em movimento — há um caminho definido e a pessoa está construindo tração, competência e consistência ao longo dele. A pergunta não é mais "para onde vou" mas "como sustento e aprofundo o que estou construindo".
 
-Falas típicas:
-> "Já sei o que estou construindo, mas preciso ganhar tração."  
-> "Quero sustentar melhor esse caminho."  
+**Sinais na fala:**
+- Caminho já definido
+- Foco em consistência, execução e profundidade
+- Pergunta sobre como sustentar e crescer no caminho
+- Construção ativa de reputação, resultado ou escala
+
+**Falas típicas:**
+> "Já sei o que estou construindo, mas preciso ganhar tração."
+> "Quero sustentar melhor esse caminho."
 > "Preciso transformar isso em rotina e resultado."
-
----
-
-### Reposicionamento
-
-Sinais:
-- algo deixou de fazer sentido
-- revisão de rota
-- desencaixe entre trajetória atual e identidade emergente
-
-Falas típicas:
-> "Isso já não faz tanto sentido."  
-> "Acho que preciso atualizar minha rota."  
-> "Não sei se é ajuste ou recomeço."
+> "Quero aprofundar o que já comecei."
 
 ---
 
 ### Legado
 
-Sinais:
-- contribuição
-- transmissão
-- impacto
-- continuidade
-- orientação para algo maior que desempenho individual
+**O que é:**
+A pessoa está orientada para construir algo duradouro — impacto, contribuição e significado além do desempenho individual. Não tem a ver com idade ou senioridade. É uma orientação de carreira: a pergunta deixou de ser "o que eu vou fazer" e passou a ser "o que eu quero que dure".
 
-Falas típicas:
-> "Quero deixar algo."  
-> "Quero contribuir mais."  
-> "Quero entender para que estou construindo isso."
+**Sinais na fala:**
+- Orientação para impacto e contribuição
+- Construção de algo que vai além de resultados pessoais
+- Desejo de deixar algo que persista
+- Foco em transferência de conhecimento, formação de outros, institucionalização
 
----
-
-## 10. Índice de clareza — necessidade de âncoras
-
-O índice de clareza deve ser calculado com base nos 5 critérios já definidos.
-
-Cada critério recebe:
-
-- 0 = ausente
-- 1 = parcialmente presente
-- 2 = claramente presente
-
-Total: 0 a 10 pontos
-
-Conversão:
-- 0–2 = Difusa
-- 3–4 = Emergente
-- 5–6 = Em construção
-- 7–8 = Clara
-- 9–10 = Muito clara
+**Falas típicas:**
+> "Quero deixar algo."
+> "Quero construir algo que dure além de mim."
+> "Quero contribuir para algo maior."
+> "Quero que o que estou fazendo tenha impacto real no campo."
+> "Não quero apenas crescer — quero que isso signifique algo."
 
 ---
 
-## 11. Critério 1 — Nomeação da direção
+## 10. Índice de clareza de trajetória — definição oficial
 
-Pergunta: A pessoa consegue nomear um caminho reconhecível?
+O índice mede **o quanto a pessoa parece consciente da trajetória profissional que está construindo**. Não mede sucesso, maturidade ou qualidade de decisão.
 
-### 0 pontos
+Dois critérios. Cada um recebe 0 ou 1. Total: 0 a 2 pontos.
 
-A pessoa não consegue nomear direção.
+| Pontos | Label |
+|---|---|
+| 0 | Incerta |
+| 1 | Em formação |
+| 2 | Clara |
+
+---
+
+### Critério 1 — Nomeação da trajetória
+
+**Pergunta:** A pessoa consegue nomear a trajetória profissional que está construindo?
+
+**0 pontos** — A pessoa não nomeia ou usa termos completamente abertos.
 
 Falas típicas:
-> "Não sei."  
-> "Talvez várias coisas."  
-> "Ainda estou perdido."  
-> "Não tenho ideia."  
+> "Não sei."
+> "Talvez várias coisas."
+> "Ainda estou perdido."
 > "Estou aberto a tudo."
 
-### 1 ponto
-
-Existem possibilidades mais fortes, mas ainda muito abertas.
+**1 ponto** — A pessoa nomeia uma trajetória reconhecível com suas próprias palavras.
 
 Falas típicas:
-> "Acho que talvez empreendedorismo."  
-> "Me vejo um pouco em produto."  
-> "Tenho pensado em trabalhar com empresas."  
-> "Gosto de educação, mas não sei em que formato."  
-> "Talvez eu queira algo mais autoral."
-
-### 2 pontos
-
-A pessoa consegue nomear uma direção principal claramente.
-
-Falas típicas:
-> "Quero construir uma trajetória empreendedora."  
-> "Quero assumir papel na empresa da família."  
-> "Quero seguir carreira executiva."  
-> "Quero construir uma carreira como consultor."  
-> "Quero viver de conteúdo e construir audiência."
+> "Quero empreender."
+> "Quero seguir carreira executiva."
+> "Quero construir minha própria carteira como profissional liberal."
+> "Quero criar conteúdo e construir audiência."
+> "Quero continuar na empresa da família e assumir um papel de liderança."
 
 ---
 
-## 12. Critério 2 — Coerência da fala
+### Critério 2 — Critério próprio
 
-Pergunta: As falas apontam para uma direção dominante?
+**Pergunta:** A justificativa da pessoa para essa trajetória vem de dentro dela?
 
-### 0 pontos
-
-A fala é muito contraditória ou dispersa.
-
-Exemplos:
-> "Quero empreender, mas também quero concurso, talvez academia, talvez empresa da família."  
-> "Tudo me interessa igual."  
-> "Não sei se quero estabilidade, risco, autonomia ou liderança."
-
-### 1 ponto
-
-Existe alguma coerência, mas ainda com oscilação.
-
-Exemplos:
-> "Falo bastante de criar projetos, mas também tenho dúvida se quero uma empresa."  
-> "Acho que gosto de liderar, mas ainda não sei se quero isso numa empresa ou no negócio da família."  
-> "Tenho caminhos que se repetem, mas ainda não sei qual pesa mais."
-
-### 2 pontos
-
-As falas convergem claramente para uma direção dominante.
-
-Exemplos:
-> A pessoa fala repetidamente de criar, testar, validar e lançar algo próprio.  
-> A pessoa fala repetidamente de continuidade, empresa da família e transição geracional.  
-> A pessoa fala repetidamente de liderança, área, time e resultado.  
-> A pessoa fala repetidamente de conteúdo, audiência e voz pública.
-
----
-
-## 13. Critério 3 — Critério próprio
-
-Pergunta: A pessoa consegue explicar por que esse caminho faz sentido para ela?
-
-### 0 pontos
-
-A justificativa vem quase toda de fora.
+**0 pontos** — A justificativa vem quase toda de fora (expectativa, segurança, pressão familiar, caminho óbvio).
 
 Falas típicas:
-> "É o que esperam de mim."  
-> "É o caminho mais seguro."  
-> "Todo mundo fala que é uma boa opção."  
-> "Minha família acha que faz sentido."  
-> "Parece o caminho certo."
+> "É o que esperam de mim."
+> "É o caminho mais seguro."
+> "Minha família acha que faz sentido."
+> "Parece o caminho natural."
 
-### 1 ponto
-
-Existem critérios parcialmente próprios, mas ainda misturados com expectativa externa.
+**1 ponto** — A pessoa consegue explicar por que essa trajetória faz sentido para ela com palavras próprias.
 
 Falas típicas:
-> "Acho que combina comigo, mas também pesa o que minha família espera."  
-> "Gosto disso, mas não sei se é desejo meu ou influência do ambiente."  
-> "Vejo sentido, mas ainda busco muita validação."
-
-### 2 pontos
-
-A pessoa explica com clareza uma motivação própria.
-
-Falas típicas:
-> "Esse caminho me dá energia porque gosto de construir do zero."  
-> "Quero liderar porque gosto de coordenar pessoas e responder pelo conjunto."  
-> "A empresa da família importa para mim porque vejo uma oportunidade real de continuidade e transformação."  
+> "Esse caminho me dá energia porque gosto de construir do zero."
+> "Quero liderar porque gosto de coordenar pessoas e responder pelo conjunto."
 > "Conteúdo faz sentido porque eu gosto de organizar ideias publicamente."
+> "A empresa da família importa porque vejo uma oportunidade real de transformação."
 
 ---
 
-## 14. Critério 4 — Movimento concreto
+## 11. Como o agente captura sinal para o índice de clareza
 
-Pergunta: Existe alguma movimentação prática coerente com a direção?
+Para que o motor de inferência possa calcular o índice de clareza, o agente precisa provocar a pessoa a nomear sua trajetória e a explicar por que ela faz sentido.
 
-### 0 pontos
+A pergunta direta deve aparecer no bloco de Direção e Futuro Profissional:
 
-Nenhum movimento concreto.
+> "Se você tivesse que nomear o caminho profissional que está construindo — ou que quer construir — como você descreveria?"
 
-Falas típicas:
-> "Ainda não fiz nada."  
-> "Estou só pensando."  
-> "Tenho vontade, mas não comecei."  
-> "Ainda estou pesquisando."
+Seguida de aprofundamento se a pessoa nomear algo:
 
-### 1 ponto
+> "E por que esse caminho faz sentido pra você?"
 
-Existem movimentos pequenos, pontuais ou inconsistentes.
-
-Falas típicas:
-> "Conversei com algumas pessoas."  
-> "Comecei um projeto, mas parei."  
-> "Fiz um curso."  
-> "Tenho anotado ideias."  
-> "Testei uma vez, mas não dei continuidade."
-
-### 2 pontos
-
-Existem projetos, experiências ou responsabilidades coerentes com a direção.
-
-Falas típicas:
-> "Já estou tocando um projeto nessa área."  
-> "Tenho conversado com clientes."  
-> "Assumi uma frente na empresa."  
-> "Publiquei conteúdos por algumas semanas."  
-> "Estou liderando uma iniciativa relacionada a isso."  
-> "Já testei essa ideia com pessoas reais."
+Sem essas perguntas, o motor vai inferir o índice a partir de sinais indiretos — o que é menos preciso.
 
 ---
 
-## 15. Critério 5 — Sustentação da ambiguidade
+## 12. Como o agente lida com as 4 fases sem saber a fase upfront
 
-Pergunta: A pessoa consegue sustentar uma direção sem precisar ter certeza absoluta?
+O agente faz perguntas universais que geram sinal para qualquer fase.
 
-### 0 pontos
+As perguntas do bloco 1 (contexto profissional) e bloco 2 (movimentos e experiências) capturam sinais de Exploração e Consolidação naturalmente.
 
-A pessoa precisa de certeza total antes de se mover.
+As perguntas do bloco 3 (direção e futuro) — especialmente a pergunta de nomeação de trajetória — capturam sinal para Direção e Legado.
 
-Falas típicas:
-> "Só vou decidir quando tiver certeza."  
-> "Tenho medo de escolher errado."  
-> "Preciso saber se é o caminho certo antes de começar."  
-> "Não quero arriscar sem garantia."
+O bloco 4 (fricções e desafios) captura sinais de tensão que complementam a fase.
 
-### 1 ponto
-
-A pessoa tolera alguma ambiguidade, mas muda facilmente ou trava.
-
-Falas típicas:
-> "Até consigo testar, mas fico duvidando o tempo todo."  
-> "Começo, mas logo penso em trocar."  
-> "Se aparece outra possibilidade, eu me confundo."  
-> "Consigo avançar um pouco, mas ainda preciso de muita confirmação."
-
-### 2 pontos
-
-A pessoa consegue sustentar direção mesmo sem certeza absoluta.
-
-Falas típicas:
-> "Não tenho todas as respostas, mas quero testar isso por um período."  
-> "Sei que posso ajustar depois."  
-> "Quero avançar mesmo sem certeza total."  
-> "Não preciso decidir a vida inteira agora, mas esse caminho merece energia."
+A fase é inferida depois pelo motor de análise com base na transcrição completa.
 
 ---
 
-## 16. JSON de saída
+## 13. JSON de saída — schema oficial
 
 O sistema deve gerar um JSON formal, com campos consistentes.
-
-A UI pode mostrar apenas uma versão simplificada, mas o backend deve manter estrutura clara.
-
-Schema oficial:
 
 ```json
 {
   "phase": {
-    "name": "Autoria",
-    "short_description": "Você parece estar tentando diferenciar o que realmente faz sentido para você daquilo que veio como expectativa externa.",
+    "name": "Direção",
+    "short_description": "O que aparece na sua fala é alguém que já tem uma aposta — você sabe para onde quer ir, mas ainda está construindo a convicção de que esse caminho é realmente seu.",
     "confidence": 0.82,
     "evidence": [
-      "A pessoa mencionou medo de decepcionar a família",
-      "A pessoa questionou se a escolha é realmente dela"
+      "A pessoa nomeou uma trajetória clara",
+      "A pessoa expressou tensão entre desejo próprio e expectativa externa"
     ]
   },
   "pathway": {
-    "name": "Sucessor",
-    "short_description": "O caminho que mais parece emergir é assumir um papel mais claro no negócio da família.",
+    "name": "Empreendedor",
+    "short_description": "O que chama atenção é a combinação de energia para criar do zero com a dificuldade de se encaixar em estruturas que não são suas — isso é traço de quem constrói melhor quando tem autonomia real.",
     "confidence": 0.78,
     "evidence": [
-      "A pessoa falou sobre continuidade da empresa da família",
-      "A pessoa mencionou modernizar o negócio sem romper com a história"
+      "A pessoa mencionou vontade de criar algo próprio",
+      "A pessoa falou em dificuldade com hierarquias rígidas"
     ]
   },
   "clarity": {
-    "score_1_to_5": 3,
-    "label": "Em construção",
-    "total_points_0_to_10": 6,
+    "score_1_to_3": 2,
+    "label": "Em formação",
+    "total_points_0_to_2": 1,
     "criteria": {
       "direction_naming": {
-        "score_0_to_2": 1,
-        "evidence": "A pessoa fala em empresa da família, mas ainda não nomeia claramente o papel que quer assumir."
-      },
-      "speech_coherence": {
-        "score_0_to_2": 2,
-        "evidence": "A fala converge para continuidade e papel no negócio familiar."
+        "score_0_to_1": 1,
+        "evidence": "A pessoa nomeou empreendedorismo como caminho principal."
       },
       "own_criteria": {
-        "score_0_to_2": 1,
-        "evidence": "Existe desejo próprio, mas ainda misturado com expectativa familiar."
-      },
-      "concrete_movement": {
-        "score_0_to_2": 1,
-        "evidence": "A pessoa já participou de algumas conversas, mas ainda não assumiu projeto concreto."
-      },
-      "ambiguity_tolerance": {
-        "score_0_to_2": 1,
-        "evidence": "A pessoa aceita conversar sobre o tema, mas ainda busca confirmação externa."
+        "score_0_to_1": 0,
+        "evidence": "A justificativa ainda mistura desejo próprio com expectativa do ambiente."
       }
     }
   },
   "tension": {
-    "name": "Autonomia vs lealdade familiar",
-    "short_description": "O principal desafio parece ser construir um caminho próprio sem sentir que isso rompe o vínculo com a família.",
+    "name": "Dependência de validação",
+    "short_description": "O maior obstáculo agora parece ser a necessidade de ter confirmação externa antes de avançar — o caminho já está mais claro do que a confiança para percorrê-lo.",
     "confidence": 0.84,
     "evidence": [
-      "A pessoa mencionou medo de decepcionar",
-      "A pessoa falou em culpa ao pensar diferente"
+      "A pessoa mencionou buscar aprovação antes de decidir",
+      "A pessoa falou em medo de errar a escolha"
     ]
   },
   "actions": [
     {
       "type": "para_dentro",
-      "title": "Escreva sua versão do papel na empresa",
-      "description": "Escreva um parágrafo começando com: 'Se eu entrasse na empresa da família do meu jeito, eu começaria por...'.",
-      "why_this_action": "Ajuda a separar desejo próprio de expectativa familiar.",
+      "title": "Escreva sua versão do caminho",
+      "description": "Pegue 20 minutos e escreva: 'O caminho que faz sentido pra mim é [X] porque...' — usando as mesmas palavras que você usou na conversa hoje.",
+      "why_this_action": "Separar o que você quer do que esperam de você começa colocando isso no papel com suas próprias palavras.",
       "timeframe": "7 dias"
     },
     {
       "type": "para_fora",
-      "title": "Converse com alguém da geração anterior",
-      "description": "Mande mensagem para a pessoa da família que você citou e pergunte qual decisão profissional foi mais difícil para ela entre os 25 e 35 anos.",
-      "why_this_action": "Cria uma conversa concreta sobre expectativa, trajetória e pertencimento.",
+      "title": "Converse com alguém que escolheu esse caminho",
+      "description": "Mande mensagem para alguém que você admira e que está construindo a trajetória que você mencionou. Pergunte: qual foi o momento em que isso virou aposta real pra você?",
+      "why_this_action": "Ver como outra pessoa passou pela mesma virada é mais útil do que continuar analisando sozinho.",
       "timeframe": "7 dias"
     },
     {
       "type": "prototipar",
-      "title": "Monte uma proposta pequena",
-      "description": "Escolha um problema pequeno da empresa que você mencionou e monte um slide com uma melhoria possível.",
-      "why_this_action": "Testa autoria dentro do contexto familiar sem exigir uma decisão definitiva.",
+      "title": "Teste o caminho por uma semana",
+      "description": "Escolha uma ação concreta ligada ao caminho que você nomeou. Faça por 30 minutos por dia durante 7 dias — sem compromisso definitivo, só para gerar dados reais.",
+      "why_this_action": "Uma semana de experiência concreta vale mais do que semanas de análise sobre o que pode ou não funcionar.",
       "timeframe": "7 dias"
     }
   ],
   "metadata": {
-    "anxiety_score_1_to_5": 4,
+    "anxiety_score_1_to_5": 3,
     "conversation_duration_seconds": 260,
-    "mentioned_people": ["pai", "irmã"],
-    "mentioned_projects": ["nova frente digital"],
-    "raw_summary": "A pessoa está avaliando um possível papel no negócio familiar, com desejo de contribuir, mas receio de perder autonomia."
+    "mentioned_people": ["pai", "amigo do setor"],
+    "mentioned_projects": ["startup de educação"],
+    "raw_summary": "A pessoa está construindo convicção em torno de uma trajetória empreendedora, mas ainda busca validação externa antes de apostar com mais força."
   }
 }
 ```
 
 ---
 
-## 17. Regra sobre os 4 perfis antigos
+## 14. Regra sobre os 4 perfis antigos
 
 Os 4 perfis antigos **NÃO** se aplicam mais.
 
@@ -717,28 +578,11 @@ Perfis antigos:
 - Executor sem Norte
 - Esperando Permissão
 
-Eles não devem aparecer como:
-- output
-- lógica interna
-- categoria
-- perfil
-- rótulo
-- tela
-- explicação
-- fallback
-- nome de tensão
-- tag
-- variável
-- prompt
-- JSON
+Eles não devem aparecer como output, lógica interna, categoria, perfil, rótulo, tela, explicação, fallback, nome de tensão, tag, variável, prompt, JSON.
 
 ---
 
-## 18. Como os perfis antigos foram absorvidos
-
-O melhor desses perfis foi absorvido pelo novo sistema de tensões.
-
-Mapeamento conceitual (apenas histórico — não usar no sistema):
+## 15. Como os perfis antigos foram absorvidos
 
 | Perfil antigo | Absorvido por |
 |---|---|
@@ -751,22 +595,21 @@ Esse mapeamento é apenas registro histórico. O sistema novo **NÃO** deve menc
 
 ---
 
-## 19. Decisão final
+## 16. Decisão final
 
 A arquitetura oficial do produto agora é:
 
-1. **Fase**
-2. **Trajetória**
-3. **Índice de clareza**
-4. **Tensão**
-5. **Ações**
+1. **Fase** (4 opções: Exploração · Direção · Consolidação · Legado)
+2. **Trajetória** (7 opções)
+3. **Índice de clareza de trajetória** (3 níveis: Incerta · Em formação · Clara)
+4. **Tensão** (8 opções)
+5. **Ações** (3 — uma de cada tipo: para_dentro · para_fora · prototipar)
 
 Não usar mais:
 - perfis antigos
 - arquétipos
 - categorias híbridas
-- operador
-- alocador
-- especialista
+- operador, alocador, especialista
+- fases Autoria e Reposicionamento
 
 O produto deve permanecer **simples, editorial, humano e não classificatório.**

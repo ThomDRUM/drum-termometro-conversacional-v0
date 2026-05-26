@@ -68,7 +68,7 @@ export default function LeadDrawer({
               label="Clareza"
               value={
                 result?.clarity?.label
-                  ? `${result.clarity.label} (${result.clarity.total_points_0_to_10}/10)`
+                  ? `${result.clarity.label} (${result.clarity.total_points_0_to_2}/2)`
                   : "—"
               }
             />
