@@ -16,7 +16,7 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Termômetro 0→1 · DRUM",
+  title: "DRUM · Diagnóstico de carreira",
   description:
     "Uma conversa curta de voz pra entender em que ponto você está na sua carreira.",
 };
@@ -33,15 +33,9 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <header className="px-6 sm:px-10 py-5 flex items-center justify-between">
-          <a
-            href="/"
-            className="font-display text-xl tracking-tight text-foreground"
-          >
+          <a href="/" className="font-display text-xl tracking-tight text-foreground">
             DRUM
           </a>
-          <span className="text-xs uppercase tracking-[0.2em] text-muted">
-            Termômetro 0→1
-          </span>
         </header>
         {children}
         <footer className="px-6 sm:px-10 py-6 text-xs text-muted flex flex-col sm:flex-row gap-2 sm:justify-between">

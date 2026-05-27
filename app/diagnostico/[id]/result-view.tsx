@@ -301,37 +301,17 @@ const CLARITY_DESCRIPTIONS: Record<ClarityLabel, string> = {
 
 function ClarityCard({ clarity }: { clarity: Diagnostico["clarity"] }) {
   const label = clarity.label as ClarityLabel;
-  const pct   = Math.round((clarity.total_points_0_to_2 / 2) * 100);
+  const pct   = Math.round(((clarity.score_1_to_3 - 1) / 2) * 100);
 
   return (
     <div className="bg-surface border border-subtle rounded-2xl p-5 sm:p-6 space-y-4">
-      <div className="flex items-start justify-between gap-4">
-        <div className="space-y-0.5">
-          <p className="text-xs uppercase tracking-widest text-muted">Clareza de trajetória</p>
-          <p className="font-display text-5xl tracking-tight leading-none text-foreground">
-            {clarity.total_points_0_to_2}
-            <span className="text-2xl text-muted/60">/2</span>
-          </p>
-          <p className="text-sm text-accent font-medium">{label}</p>
-        </div>
-        <div className="space-y-1 pt-1 text-right">
-          {Object.entries(clarity.criteria).map(([key, c]) => (
-            <div key={key} className="flex items-center gap-2 justify-end">
-              <span className="text-[10px] text-muted/60 uppercase tracking-wide">
-                {key === "direction_naming" ? "Nomeação" : "Critério próprio"}
-              </span>
-              <div
-                className={`w-5 h-5 rounded flex items-center justify-center text-xs font-mono font-medium ${
-                  c.score_0_to_1 === 1
-                    ? "bg-accent text-background"
-                    : "bg-subtle text-muted/50"
-                }`}
-              >
-                {c.score_0_to_1}
-              </div>
-            </div>
-          ))}
-        </div>
+      <div className="space-y-0.5">
+        <p className="text-xs uppercase tracking-widest text-muted">Clareza de trajetória</p>
+        <p className="font-display text-5xl tracking-tight leading-none text-foreground">
+          {clarity.score_1_to_3}
+          <span className="text-2xl text-muted/60">/3</span>
+        </p>
+        <p className="text-sm text-accent font-medium">{label}</p>
       </div>
 
       <div className="space-y-1.5">
