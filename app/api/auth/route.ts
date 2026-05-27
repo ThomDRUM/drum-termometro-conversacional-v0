@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import { insert, selectOne } from "@/lib/butterbase";
 import { hashSenha, verifySenha } from "@/lib/auth";
 
-type User = { id: string; nome: string; email: string; senha_hash: string | null };
+type User = { id: string; nome: string; email: string; telefone: string | null; senha_hash: string | null };
 
 export async function POST(req: Request) {
   const body = (await req.json().catch(() => null)) as {
     nome?: string;
     email?: string;
+    telefone?: string;
     senha?: string;
   } | null;
 
@@ -21,6 +22,7 @@ export async function POST(req: Request) {
   const email = body.email.trim().toLowerCase();
   const senha = body.senha;
   const nome = body.nome?.trim() || email.split("@")[0];
+  const telefone = body.telefone?.trim() || null;
 
   const existing = await selectOne<User>("users", `email=eq.${encodeURIComponent(email)}`);
 
@@ -44,6 +46,7 @@ export async function POST(req: Request) {
   const user = await insert<User>("users", {
     nome,
     email,
+    telefone,
     senha_hash: hashSenha(senha),
     role: "mentorado",
   });

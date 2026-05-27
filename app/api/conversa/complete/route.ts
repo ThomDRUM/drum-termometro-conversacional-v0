@@ -20,6 +20,7 @@ export async function POST(req: Request) {
 
   const conv = await waitForConversation(conversation_id);
   const { transcript, variables } = normalizeTranscript(conv);
+  console.log(`[complete] conv status: ${conv.status}, transcript turns: ${transcript.length}, variables:`, JSON.stringify(variables));
 
   const voice = await selectOne<{ id: string }>(
     "voice_conversations",
@@ -43,11 +44,13 @@ export async function POST(req: Request) {
 
   let diagnostico;
   let model = "fallback";
+  let diagnoseError: string | null = null;
   try {
     const out = await diagnose(transcript, variables);
     diagnostico = out.diagnostico;
     model = out.model;
   } catch (err) {
+    diagnoseError = String(err);
     console.error("Anthropic failed, using fallback:", err);
     diagnostico = buildFallback();
   }
@@ -68,5 +71,5 @@ export async function POST(req: Request) {
     completed_at: new Date().toISOString(),
   });
 
-  return NextResponse.json({ ok: true, response_id });
+  return NextResponse.json({ ok: true, response_id, diagnose_error: diagnoseError, ai_model: model });
 }

@@ -41,6 +41,13 @@ function Inner({ responseId }: { responseId: string }) {
           body: JSON.stringify({ response_id: responseId, conversation_id: cid }),
         });
         if (!res.ok) throw new Error(await res.text());
+        const data = await res.json() as { ok: boolean; diagnose_error?: string | null; ai_model?: string };
+        if (data.diagnose_error) {
+          console.error("[DRUM] diagnose error:", data.diagnose_error);
+          setPhase("error");
+          setErrorMsg("Erro na inferência: " + data.diagnose_error);
+          return;
+        }
         router.push(`/diagnostico/${responseId}`);
       } catch (e) {
         setPhase("error");

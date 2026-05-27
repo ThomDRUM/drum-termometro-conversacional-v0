@@ -32,16 +32,13 @@ function Hero({ onStart }: { onStart: () => void }) {
   return (
     <div className="w-full max-w-xl flex flex-col items-center gap-12">
       <div className="space-y-6 text-center">
-        <p className="text-xs uppercase tracking-[0.25em] text-accent font-medium">
-          Para quem acabou de se formar
-        </p>
         <h1 className="font-display text-5xl sm:text-6xl leading-[1.05] tracking-tight">
           Em que ponto da sua{" "}
           <span className="italic text-accent">carreira</span> você está?
         </h1>
         <p className="text-lg text-muted leading-relaxed max-w-md mx-auto">
-          Uma conversa de voz de 5 minutos. No final, você recebe uma devolutiva
-          escrita — específica pra você, não um teste de revista.
+          Uma conversa de voz de 5 minutos. No final, você recebe uma leitura
+          escrita do seu momento — específica pra você, não um teste de revista.
         </p>
       </div>
 
@@ -55,7 +52,7 @@ function Hero({ onStart }: { onStart: () => void }) {
       <div className="w-full grid grid-cols-3 gap-3 sm:gap-6 text-center">
         <Stat n="5 min" label="de conversa" />
         <Stat n="1 leitura" label="do seu momento" />
-        <Stat n="3 ações" label="pros próximos 30 dias" />
+        <Stat n="3 ações" label="pros próximos 7 dias" />
       </div>
 
       <PreviewCard />
@@ -77,6 +74,7 @@ function SignupForm({
 }) {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -89,7 +87,7 @@ function SignupForm({
       const auth = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nome, email, senha }),
+        body: JSON.stringify({ nome, email, telefone, senha }),
       });
       if (!auth.ok) throw new Error((await auth.json()).error || "Erro no cadastro");
       const { user_id } = (await auth.json()) as { user_id: string };
@@ -127,11 +125,11 @@ function SignupForm({
           Antes de começar
         </p>
         <h2 className="font-display text-3xl sm:text-4xl tracking-tight leading-tight">
-          A gente precisa saber como te chamar de volta.
+          Antes de começar, nos conta quem você é.
         </h2>
         <p className="text-muted leading-relaxed">
-          Sua devolutiva fica salva no seu email. Se você voltar depois, é só
-          entrar de novo com os mesmos dados.
+          Seus dados ficam salvos. Você pode voltar depois pra rever sua
+          devolutiva com os mesmos dados.
         </p>
       </header>
 
@@ -152,13 +150,21 @@ function SignupForm({
           required
         />
         <Field
+          label="Telefone (WhatsApp)"
+          type="tel"
+          value={telefone}
+          onChange={setTelefone}
+          autoComplete="tel"
+          placeholder="(11) 99999-9999"
+        />
+        <Field
           label="Senha"
           type="password"
           value={senha}
           onChange={setSenha}
           autoComplete="new-password"
           required
-          hint="Mínimo 6 caracteres. Se já tiver conta, usamos a mesma."
+          hint="Mínimo 6 caracteres. Se já tiver conta, use a mesma senha."
           minLength={6}
         />
       </div>
@@ -194,6 +200,7 @@ function Field({
   autoComplete,
   required,
   minLength,
+  placeholder,
 }: {
   label: string;
   value: string;
@@ -203,6 +210,7 @@ function Field({
   autoComplete?: string;
   required?: boolean;
   minLength?: number;
+  placeholder?: string;
 }) {
   return (
     <label className="block space-y-1.5">
@@ -214,6 +222,7 @@ function Field({
         autoComplete={autoComplete}
         required={required}
         minLength={minLength}
+        placeholder={placeholder}
         className="w-full bg-surface border border-subtle rounded-xl px-4 py-3 text-base text-foreground placeholder:text-muted focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
       />
       {hint && <span className="text-xs text-muted">{hint}</span>}
@@ -233,22 +242,26 @@ function Stat({ n, label }: { n: string; label: string }) {
 function PreviewCard() {
   return (
     <div className="w-full bg-surface border border-subtle rounded-2xl p-6 sm:p-8 space-y-4 relative overflow-hidden">
-      <div className="space-y-1">
+      <div className="flex items-center justify-between">
         <p className="text-xs uppercase tracking-widest text-muted">
           Exemplo de leitura
         </p>
-        <p className="font-display text-xl">Autoria</p>
+        <span className="text-xs bg-accent/10 text-accent px-2.5 py-1 rounded-full font-medium">
+          Direção · Sucessor
+        </span>
       </div>
       <div className="space-y-3 text-sm text-foreground/80 leading-relaxed select-none">
         <p>
-          Você parece estar num momento em que a principal pergunta não é
-          &quot;o que fazer&quot;, mas &quot;o que é realmente meu&quot;. Você
-          mencionou <em>&quot;não sei se é o que eu quero ou o que esperam de mim&quot;</em>{" "}
-          — e essa distinção importa mais do que parece.
+          O que aparece na sua fala é alguém que tem uma aposta clara — continuar
+          o que o avô construiu — mas que ainda não pisou de fato nesse caminho.
+          Você falou em <em>&quot;honrar a família&quot;</em> e em{" "}
+          <em>&quot;falar de igual para igual&quot;</em> — e essa tensão entre
+          lealdade e autoridade própria é exatamente onde o trabalho começa.
         </p>
-        <p className="text-muted/70 blur-[2px] select-none">
-          O que apareceu na sua fala sobre a empresa da família e o medo de
-          decepcionar aponta para uma tensão específica que vale nomear…
+        <p className="text-muted/60 blur-[2px] select-none pointer-events-none">
+          A tensão principal que aparece é entre o que você quer construir e o
+          peso do que já existe. As três ações abaixo foram pensadas especificamente
+          para esse momento…
         </p>
       </div>
       <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-surface to-transparent pointer-events-none" />
