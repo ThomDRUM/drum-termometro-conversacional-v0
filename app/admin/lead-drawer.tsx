@@ -64,6 +64,7 @@ export default function LeadDrawer({
               value={result?.pathway?.name ?? "—"}
             />
             <Info label="Email" value={lead.email || "—"} />
+            <Info label="Telefone" value={lead.telefone || "—"} />
             <Info
               label="Clareza"
               value={

@@ -11,6 +11,11 @@ type ResponseRow = {
   completed_at: string | null;
 };
 
+type UserRow = {
+  id: string;
+  telefone: string | null;
+};
+
 type ResultRow = Diagnostico & {
   response_id: string;
   ai_model: string | null;
@@ -31,6 +36,7 @@ export type Lead = {
   response_id: string;
   nome: string | null;
   email: string | null;
+  telefone: string | null;
   status: string;
   created_at: string;
   completed_at: string | null;
@@ -62,23 +68,27 @@ function band(score: number): Lead["band"] {
 }
 
 export async function listLeads(): Promise<Lead[]> {
-  const [responses, results, voices] = await Promise.all([
+  const [responses, results, voices, users] = await Promise.all([
     selectMany<ResponseRow>("assessment_responses", "order=created_at.desc"),
     selectMany<ResultRow>("assessment_results"),
     selectMany<VoiceRow>("voice_conversations"),
+    selectMany<UserRow>("users", "select=id,telefone"),
   ]);
 
   const resultByResponse = new Map(results.map((r) => [r.response_id, r]));
   const voiceByResponse  = new Map(voices.map((v) => [v.response_id, v]));
+  const telefoneByUser   = new Map(users.map((u) => [u.id, u.telefone]));
 
   return responses.map((r) => {
-    const result = resultByResponse.get(r.id) ?? null;
-    const voice  = voiceByResponse.get(r.id)  ?? null;
-    const score  = scoreLead(r, result, voice);
+    const result   = resultByResponse.get(r.id) ?? null;
+    const voice    = voiceByResponse.get(r.id)  ?? null;
+    const telefone = r.user_id ? (telefoneByUser.get(r.user_id) ?? null) : null;
+    const score    = scoreLead(r, result, voice);
     return {
       response_id:   r.id,
       nome:          r.nome,
       email:         r.email,
+      telefone,
       status:        r.status,
       created_at:    r.created_at,
       completed_at:  r.completed_at,
