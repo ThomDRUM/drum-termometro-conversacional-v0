@@ -3,7 +3,7 @@ import { insert, updateById, selectOne } from "@/lib/butterbase";
 import { waitForConversation, normalizeTranscript } from "@/lib/elevenlabs";
 import { diagnose, buildFallback } from "@/lib/anthropic";
 
-export const maxDuration = 90;
+export const maxDuration = 60;
 
 export async function POST(req: Request) {
   const { response_id, conversation_id } = (await req.json()) as {

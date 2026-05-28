@@ -57,7 +57,7 @@ export function normalizeTranscript(
 // Poll until the ElevenLabs side finishes processing (transcript + analysis).
 export async function waitForConversation(
   conversationId: string,
-  { maxMs = 60_000, intervalMs = 2_000 } = {},
+  { maxMs = 20_000, intervalMs = 2_000 } = {},
 ): Promise<ElevenLabsConversation> {
   const deadline = Date.now() + maxMs;
   let last: ElevenLabsConversation | null = null;
