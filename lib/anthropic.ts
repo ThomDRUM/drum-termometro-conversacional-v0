@@ -336,7 +336,7 @@ Gere o diagnóstico no formato JSON especificado. Responda APENAS com o JSON —
 
   const res = await client().messages.create({
     model: MODEL,
-    max_tokens: 2048,
+    max_tokens: 4096,
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: userMsg }],
   });
