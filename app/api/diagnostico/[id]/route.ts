@@ -13,11 +13,21 @@ export async function GET(
   if (!result) {
     return NextResponse.json({ ready: false });
   }
-  const response = await selectOne(
-    "assessment_responses",
-    `id=eq.${id}`,
-  );
-  return NextResponse.json({ ready: true, result, response });
+
+  const [response, voice] = await Promise.all([
+    selectOne("assessment_responses", `id=eq.${id}`),
+    selectOne<{
+      duracao_seg: number | null;
+      transcript: Array<{ role: string }> | null;
+    }>("voice_conversations", `response_id=eq.${id}`),
+  ]);
+
+  // Compute conversa_curta from voice data (no schema change needed)
+  const duracao    = voice?.duracao_seg ?? 0;
+  const userTurns  = (voice?.transcript ?? []).filter((t) => t.role === "user").length;
+  const conversaCurta = duracao < 120 || userTurns < 4;
+
+  return NextResponse.json({ ready: true, result, response, conversa_curta: conversaCurta });
 }
 
 export async function PATCH(

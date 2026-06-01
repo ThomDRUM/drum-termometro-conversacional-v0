@@ -20,6 +20,7 @@ export type ElevenLabsConversation = {
   metadata?: {
     call_duration_secs?: number;
     start_time_unix_secs?: number;
+    termination_reason?: string;
   };
 };
 
