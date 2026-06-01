@@ -20,6 +20,7 @@ export type ElevenLabsConversation = {
   metadata?: {
     call_duration_secs?: number;
     start_time_unix_secs?: number;
+    termination_reason?: string;
   };
 };
 
@@ -55,16 +56,20 @@ export function normalizeTranscript(
 }
 
 // Poll until the ElevenLabs side finishes processing (transcript + analysis).
+// Important: ElevenLabs sets status "done" as soon as the call ends, but the
+// transcript is populated asynchronously. We must wait for both conditions.
 export async function waitForConversation(
   conversationId: string,
-  { maxMs = 20_000, intervalMs = 2_000 } = {},
+  { maxMs = 30_000, intervalMs = 2_000 } = {},
 ): Promise<ElevenLabsConversation> {
   const deadline = Date.now() + maxMs;
   let last: ElevenLabsConversation | null = null;
   while (Date.now() < deadline) {
     try {
       last = await getConversation(conversationId);
-      if (last.status === "done" || last.status === "processed") return last;
+      const statusReady = last.status === "done" || last.status === "processed";
+      const transcriptReady = last.transcript.length > 0;
+      if (statusReady && transcriptReady) return last;
     } catch {
       // ignore transient
     }

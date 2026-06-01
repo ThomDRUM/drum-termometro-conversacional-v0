@@ -156,6 +156,7 @@ function SignupForm({
           onChange={setTelefone}
           autoComplete="tel"
           placeholder="(11) 99999-9999"
+          required
         />
         <Field
           label="Senha"

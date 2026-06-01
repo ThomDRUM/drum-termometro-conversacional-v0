@@ -19,7 +19,7 @@ type ResultRow = Diagnostico & {
 
 type ApiResponse =
   | { ready: false }
-  | { ready: true; result: ResultRow; response: { nome?: string | null } };
+  | { ready: true; result: ResultRow; response: { nome?: string | null }; conversa_curta?: boolean };
 
 export default function ResultView({ responseId }: { responseId: string }) {
   const [data, setData]             = useState<ApiResponse | null>(null);
@@ -67,10 +67,11 @@ export default function ResultView({ responseId }: { responseId: string }) {
   if (!data || !data.ready) return <ResultSkeleton />;
 
   const { result, response } = data;
-  const nome      = response?.nome;
-  const ctaReady  = chosen !== null;
-  const phaseEd   = PHASE_EDITORIAL[result.phase.name];
-  const pathwayEd = PATHWAY_EDITORIAL[result.pathway.name];
+  const nome        = response?.nome;
+  const ctaReady    = chosen !== null;
+  const phaseEd     = PHASE_EDITORIAL[result.phase.name];
+  const pathwayEd   = PATHWAY_EDITORIAL[result.pathway.name];
+  const conversaCurta = data.conversa_curta ?? false;
 
   return (
     <div className="max-w-2xl w-full space-y-20">
@@ -82,6 +83,12 @@ export default function ResultView({ responseId }: { responseId: string }) {
         <p className="text-xs uppercase tracking-[0.25em] text-accent font-medium">
           Seu momento
         </p>
+
+        {conversaCurta && (
+          <p className="text-xs text-muted bg-surface border border-subtle rounded-xl px-4 py-3 leading-relaxed">
+            Sua conversa foi mais curta que o ideal. Esta leitura é baseada em menos contexto do que o normal — pode ser menos precisa.
+          </p>
+        )}
 
         <div className="space-y-3">
           <h1 className="font-display text-4xl sm:text-5xl tracking-tight leading-tight">
@@ -232,7 +239,7 @@ export default function ResultView({ responseId }: { responseId: string }) {
           className="w-full rounded-full bg-foreground text-background py-5 font-medium hover:bg-accent transition disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {ctaClicked || result.clicked_cta
-            ? "Anotado — entraremos em contato"
+            ? "Ótimo! Vamos entrar em contato para continuar essa conversa."
             : ctaReady
               ? `Marcar conversa com a DRUM${nome ? `, ${nome}` : ""}`
               : "Escolha uma ação acima"}

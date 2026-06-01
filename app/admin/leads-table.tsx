@@ -85,6 +85,7 @@ export default function LeadsTable({ leads }: { leads: Lead[] }) {
               <th className="text-left px-4 py-3 font-medium">Score</th>
               <th className="text-left px-4 py-3 font-medium">Nome</th>
               <th className="text-left px-4 py-3 font-medium">Email</th>
+              <th className="text-left px-4 py-3 font-medium">Telefone</th>
               <th className="text-left px-4 py-3 font-medium">Fase</th>
               <th className="text-left px-4 py-3 font-medium">Trajetória</th>
               <th className="text-left px-4 py-3 font-medium">Clareza</th>
@@ -95,7 +96,7 @@ export default function LeadsTable({ leads }: { leads: Lead[] }) {
           <tbody>
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={8} className="px-4 py-12 text-center text-muted text-sm">
+                <td colSpan={9} className="px-4 py-12 text-center text-muted text-sm">
                   Nenhum lead com esses filtros.
                 </td>
               </tr>
@@ -114,6 +115,9 @@ export default function LeadsTable({ leads }: { leads: Lead[] }) {
                 </td>
                 <td className="px-4 py-3 text-muted text-xs">
                   {l.email || "—"}
+                </td>
+                <td className="px-4 py-3 text-muted text-xs">
+                  {l.telefone || "—"}
                 </td>
                 <td className="px-4 py-3 text-sm">
                   {l.result?.phase?.name ?? (

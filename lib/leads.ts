@@ -11,6 +11,11 @@ type ResponseRow = {
   completed_at: string | null;
 };
 
+type UserRow = {
+  id: string;
+  telefone: string | null;
+};
+
 type ResultRow = Diagnostico & {
   response_id: string;
   ai_model: string | null;
@@ -31,6 +36,7 @@ export type Lead = {
   response_id: string;
   nome: string | null;
   email: string | null;
+  telefone: string | null;
   status: string;
   created_at: string;
   completed_at: string | null;
@@ -40,21 +46,18 @@ export type Lead = {
   band: "hot" | "warm" | "cold";
 };
 
-const TWO_DAYS = 1000 * 60 * 60 * 48;
-
 function scoreLead(
   res: ResponseRow,
   result: ResultRow | null,
   voice: VoiceRow | null,
 ): number {
   let s = 0;
-  if (result?.clicked_cta) s += 40;
-  if (result?.chosen_action_type) s += 20;
+  if (result?.clicked_cta)                              s += 25; // intenção comercial
+  if (result?.chosen_action_type)                       s += 20; // engajamento com resultado
   const anxiety = result?.metadata?.anxiety_score_1_to_5 ?? 0;
-  if (anxiety >= 4) s += 15;
-  if ((voice?.duracao_seg ?? 0) >= 180) s += 10;
-  if (res.status === "concluido") s += 10;
-  if (Date.now() - new Date(res.created_at).getTime() < TWO_DAYS) s += 5;
+  if (anxiety >= 3)                                     s += 15; // urgência
+  if ((voice?.duracao_seg ?? 0) >= 180)                 s += 20; // profundidade da conversa
+  if (res.status === "concluido")                       s += 20; // completou o fluxo
   return s;
 }
 
@@ -65,23 +68,27 @@ function band(score: number): Lead["band"] {
 }
 
 export async function listLeads(): Promise<Lead[]> {
-  const [responses, results, voices] = await Promise.all([
+  const [responses, results, voices, users] = await Promise.all([
     selectMany<ResponseRow>("assessment_responses", "order=created_at.desc"),
     selectMany<ResultRow>("assessment_results"),
     selectMany<VoiceRow>("voice_conversations"),
+    selectMany<UserRow>("users", "select=id,telefone"),
   ]);
 
   const resultByResponse = new Map(results.map((r) => [r.response_id, r]));
   const voiceByResponse  = new Map(voices.map((v) => [v.response_id, v]));
+  const telefoneByUser   = new Map(users.map((u) => [u.id, u.telefone]));
 
   return responses.map((r) => {
-    const result = resultByResponse.get(r.id) ?? null;
-    const voice  = voiceByResponse.get(r.id)  ?? null;
-    const score  = scoreLead(r, result, voice);
+    const result   = resultByResponse.get(r.id) ?? null;
+    const voice    = voiceByResponse.get(r.id)  ?? null;
+    const telefone = r.user_id ? (telefoneByUser.get(r.user_id) ?? null) : null;
+    const score    = scoreLead(r, result, voice);
     return {
       response_id:   r.id,
       nome:          r.nome,
       email:         r.email,
+      telefone,
       status:        r.status,
       created_at:    r.created_at,
       completed_at:  r.completed_at,
