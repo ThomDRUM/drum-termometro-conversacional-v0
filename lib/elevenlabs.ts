@@ -59,7 +59,7 @@ export function normalizeTranscript(
 // transcript is populated asynchronously. We must wait for both conditions.
 export async function waitForConversation(
   conversationId: string,
-  { maxMs = 20_000, intervalMs = 2_000 } = {},
+  { maxMs = 30_000, intervalMs = 2_000 } = {},
 ): Promise<ElevenLabsConversation> {
   const deadline = Date.now() + maxMs;
   let last: ElevenLabsConversation | null = null;
