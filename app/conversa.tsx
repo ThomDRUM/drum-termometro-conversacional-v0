@@ -10,8 +10,9 @@ function Inner({ responseId }: { responseId: string }) {
   const router = useRouter();
   const conversationIdRef = useRef<string | null>(null);
   const [phase, setPhase] = useState<
-    "idle" | "connecting" | "live" | "processing" | "error"
+    "idle" | "connecting" | "live" | "processing" | "insufficient" | "error"
   >("idle");
+  const hadErrorRef = useRef(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [caption, setCaption] = useState<string>("");
   const [elapsed, setElapsed] = useState(0);
@@ -27,6 +28,9 @@ function Inner({ responseId }: { responseId: string }) {
       }
     },
     onDisconnect: async () => {
+      // If onError already fired, don't process — error state is already shown
+      if (hadErrorRef.current) return;
+
       const cid = conversationIdRef.current;
       if (!cid) {
         setPhase("error");
@@ -41,7 +45,17 @@ function Inner({ responseId }: { responseId: string }) {
           body: JSON.stringify({ response_id: responseId, conversation_id: cid }),
         });
         if (!res.ok) throw new Error(await res.text());
-        const data = await res.json() as { ok: boolean; diagnose_error?: string | null; ai_model?: string };
+        const data = await res.json() as {
+          ok?: boolean;
+          insufficient?: boolean;
+          conversa_curta?: boolean;
+          diagnose_error?: string | null;
+          ai_model?: string;
+        };
+        if (data.insufficient) {
+          setPhase("insufficient");
+          return;
+        }
         if (data.diagnose_error) {
           console.error("[DRUM] diagnose error:", data.diagnose_error);
           setPhase("error");
@@ -55,6 +69,7 @@ function Inner({ responseId }: { responseId: string }) {
       }
     },
     onError: (msg) => {
+      hadErrorRef.current = true;
       setPhase("error");
       setErrorMsg(msg);
     },
@@ -69,6 +84,7 @@ function Inner({ responseId }: { responseId: string }) {
   const start = useCallback(async () => {
     setPhase("connecting");
     setErrorMsg(null);
+    hadErrorRef.current = false;
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
       const tokenRes = await fetch("/api/conversa/token");
@@ -120,6 +136,24 @@ function Inner({ responseId }: { responseId: string }) {
       )}
 
       {phase === "processing" && <ProcessingState />}
+
+      {phase === "insufficient" && (
+        <div className="flex flex-col items-center gap-5 text-center max-w-sm mt-8">
+          <p className="font-display text-2xl tracking-tight">Conversa muito curta</p>
+          <p className="text-muted leading-relaxed text-sm">
+            Não conseguimos capturar informações suficientes para gerar uma leitura precisa do seu momento. Isso acontece quando a conversa é muito breve.
+          </p>
+          <p className="text-muted text-sm">
+            Tente novamente — leva cerca de 5 minutos e faz diferença na qualidade da devolutiva.
+          </p>
+          <button
+            onClick={start}
+            className="rounded-full bg-foreground text-background px-8 py-4 font-medium hover:bg-accent transition-colors mt-2"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      )}
 
       {phase === "error" && (
         <div className="flex flex-col items-center gap-3 text-center bg-accent-soft rounded-2xl px-6 py-5">
