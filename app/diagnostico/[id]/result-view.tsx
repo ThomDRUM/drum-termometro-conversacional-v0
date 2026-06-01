@@ -245,7 +245,7 @@ export default function ResultView({ responseId }: { responseId: string }) {
               : "Escolha uma ação acima"}
         </button>
         <p className="text-xs text-muted text-center">
-          Sem cobrança. A gente te chama por email para marcar a primeira conversa.
+          Sem cobrança. A gente te chama por WhatsApp para marcar a primeira conversa.
         </p>
       </div>
 

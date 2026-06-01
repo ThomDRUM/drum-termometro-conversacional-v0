@@ -68,10 +68,10 @@ function Inner({ responseId }: { responseId: string }) {
         setErrorMsg(String(e));
       }
     },
-    onError: (msg) => {
+    onError: () => {
       hadErrorRef.current = true;
       setPhase("error");
-      setErrorMsg(msg);
+      setErrorMsg("A conversa foi interrompida ou encerrada muito cedo. Verifique sua conexão e tente novamente.");
     },
   });
 
